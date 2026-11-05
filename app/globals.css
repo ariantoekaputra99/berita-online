@@ -331,7 +331,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .panel { padding: 28px; background: #fff; border: 1px solid var(--line); }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
 .panel-head h1 { margin: 0; font: 400 32px/1.1 var(--serif); }
-.panel-actions { display: flex; gap: 10px; }
+.panel-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .filters { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .filters a { padding: 8px 14px; border: 1px solid #cad4ca; border-radius: 999px; font-size: 13px; font-weight: 700; }
 .filters a[aria-current="page"] { background: var(--green); border-color: var(--green); color: #fff; }
