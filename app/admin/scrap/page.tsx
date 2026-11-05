@@ -2,6 +2,8 @@ import { addSource, deleteSource, runScrape, toggleSource } from "@/app/actions/
 import { timeAgo } from "@/lib/articles";
 import { createClient } from "@/lib/supabase/server";
 
+export const maxDuration = 60;
+
 type Props = { searchParams: Promise<{ ok?: string; error?: string }> };
 
 export default async function ScrapePage({ searchParams }: Props) {

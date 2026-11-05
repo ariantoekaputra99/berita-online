@@ -385,3 +385,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .article-body ul { margin: 0 0 20px; padding-left: 24px; font: 400 19px/1.75 var(--serif); }
 .article-body a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
 .article-body .btn { color: #fff; text-decoration: none; }
+
+.bulk-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding: 12px 16px; background: #fff; border: 1px solid var(--line); flex-wrap: wrap; }
+.bulk-bar p { margin: 0; font-size: 14px; color: #3f4d46; flex: 1 1 320px; }
+.ai-tag { background: #efe6fb; color: #5a2d9c; }

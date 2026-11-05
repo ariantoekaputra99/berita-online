@@ -16,6 +16,7 @@ type Props = {
     tags: string;
     status: string;
     is_scraped: boolean;
+    ai_generated?: boolean;
     source_name: string | null;
     source_url: string | null;
   };
@@ -27,6 +28,12 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
       {error && <p className="notice notice-error" role="alert">{error}</p>}
       {article?.status === "rejected" && (
         <p className="notice notice-error">Berita ini ditolak admin. Perbaiki lalu kirim ulang.</p>
+      )}
+      {article?.ai_generated && (
+        <p className="notice notice-error">
+          Brief ini ditulis otomatis oleh AI dari judul dan ringkasan sumber. Periksa faktanya terhadap berita sumber, dan
+          unggah gambar sendiri jika perlu, sebelum menerbitkan.
+        </p>
       )}
       {article?.is_scraped && (
         <aside className="source-panel">

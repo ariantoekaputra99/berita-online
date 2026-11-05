@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
+import { aiConfigured, briefDrafts } from "@/lib/ai";
 import { scrapeSources } from "@/lib/scrape";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,10 +19,17 @@ export async function runScrape(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/scrap");
 
+  let briefNote = "";
+  if (aiConfigured()) {
+    const admin = await requireRole(["admin"]);
+    const briefs = await briefDrafts(supabase, { id: admin.id, name: "Redaksi Noncof" }, { limit: 10 });
+    briefNote = ` ${briefs.written} brief otomatis dibuat.`;
+  }
+
   const { added, failures } = result;
   if (failures.length && !added) back("error", `Scrap gagal. ${failures.join("; ")}`);
   const note = failures.length ? ` (sebagian gagal: ${failures.join("; ")})` : "";
-  back("ok", `${added} berita baru masuk sebagai draft${note}.`);
+  back("ok", `${added} berita baru masuk sebagai draft${note}.${briefNote}`);
 }
 
 function validFeedUrl(raw: string): string | null {

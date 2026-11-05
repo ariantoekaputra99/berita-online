@@ -104,7 +104,7 @@ export async function getArticleBySlug(slug: string) {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("articles")
-    .select(`${CARD_FIELDS}, body, source_url, article_tags(tag:tags(name, slug))`)
+    .select(`${CARD_FIELDS}, body, ai_generated, source_url, article_tags(tag:tags(name, slug))`)
     .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
@@ -118,6 +118,7 @@ export async function getArticleBySlug(slug: string) {
   return {
     ...card,
     body: (data as { body: string }).body,
+    ai_generated: (data as { ai_generated?: boolean }).ai_generated ?? false,
     source_url: (data as { source_url: string | null }).source_url,
     tags,
   };

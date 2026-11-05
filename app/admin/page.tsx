@@ -1,9 +1,12 @@
 import { deleteArticle, setArticleStatus } from "@/app/actions/articles";
+import { generateBriefs } from "@/app/actions/brief";
 import { StatusBadge } from "@/components/StaffShell";
 import { timeAgo } from "@/lib/articles";
 import { createClient } from "@/lib/supabase/server";
 
-type Props = { searchParams: Promise<{ status?: string; ok?: string }> };
+export const maxDuration = 60;
+
+type Props = { searchParams: Promise<{ status?: string; ok?: string; error?: string }> };
 
 const FILTERS: [value: string, label: string][] = [
   ["pending", "Menunggu review"],
@@ -14,12 +17,12 @@ const FILTERS: [value: string, label: string][] = [
 ];
 
 export default async function AdminArticlesPage({ searchParams }: Props) {
-  const { status = "pending", ok } = await searchParams;
+  const { status = "pending", ok, error } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
     .from("articles")
-    .select("id, title, status, author_name, is_scraped, source_name, updated_at, has_body:body, category:categories(name)")
+    .select("id, title, status, author_name, is_scraped, ai_generated, source_name, updated_at, has_body:body, category:categories(name)")
     .order("updated_at", { ascending: false })
     .limit(100);
   if (status !== "all") query = query.eq("status", status);
@@ -42,6 +45,14 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
         </div>
       </div>
       {ok && <p className="notice notice-ok">{ok}</p>}
+      {error && <p className="notice notice-error" role="alert">{error}</p>}
+
+      {status === "draft" && (
+        <form action={generateBriefs} className="bulk-bar">
+          <p>Buat brief otomatis (AI) untuk 10 draf scrap terbaru yang belum punya isi. Hasilnya tetap draf; kamu cek lalu klik Terbitkan.</p>
+          <button className="btn btn-ghost" type="submit">Buat brief otomatis</button>
+        </form>
+      )}
 
       <nav aria-label="Filter status" className="filters">
         {FILTERS.map(([value, label], index) => (
@@ -65,7 +76,8 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                 <tr key={article.id}>
                   <td data-label="Judul">
                     <strong>{article.title}</strong>
-                    {article.is_scraped && <small className="scrape-tag">hasil scrap</small>}
+                    {article.is_scraped && !article.ai_generated && <small className="scrape-tag">hasil scrap</small>}
+                    {article.ai_generated && <small className="scrape-tag ai-tag">brief AI</small>}
                   </td>
                   <td data-label="Penulis">{article.author_name}</td>
                   <td data-label="Status"><StatusBadge status={article.status} /></td>
@@ -75,6 +87,12 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                       <a className="link-ok" href={`/dashboard/artikel/${article.id}`}>Tulis ulang</a>
                     ) : (
                       <a href={`/dashboard/artikel/${article.id}`}>Edit</a>
+                    )}
+                    {article.is_scraped && !article.has_body && article.status === "draft" && (
+                      <form action={generateBriefs}>
+                        <input name="id" type="hidden" value={article.id} />
+                        <button type="submit">Brief otomatis</button>
+                      </form>
                     )}
                     {article.status !== "published" && (
                       <form action={setArticleStatus}>
