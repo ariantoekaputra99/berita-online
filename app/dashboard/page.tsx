@@ -1,4 +1,5 @@
 import { deleteArticle } from "@/app/actions/articles";
+import { SubmitButton } from "@/components/SubmitButton";
 import { StatusBadge } from "@/components/StaffShell";
 import { requireRole, getCurrentProfile } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -60,7 +61,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                     {(article.status === "draft" || article.status === "rejected") && (
                       <form action={deleteArticle}>
                         <input name="id" type="hidden" value={article.id} />
-                        <button className="link-danger" type="submit">Hapus</button>
+                        <SubmitButton pendingText="Menghapus…" confirm="Hapus tulisan ini secara permanen?" className="link-danger">Hapus</SubmitButton>
                       </form>
                     )}
                   </td>

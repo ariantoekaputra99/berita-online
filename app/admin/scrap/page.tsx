@@ -1,4 +1,5 @@
 import { addSource, deleteSource, runScrape, toggleSource } from "@/app/actions/scrape";
+import { SubmitButton } from "@/components/SubmitButton";
 import { timeAgo } from "@/lib/articles";
 import { createClient } from "@/lib/supabase/server";
 
@@ -23,7 +24,7 @@ export default async function ScrapePage({ searchParams }: Props) {
         <h1>Scrap berita</h1>
         <form action={runScrape}>
           <input name="source_id" type="hidden" value="all" />
-          <button className="btn" type="submit">Scrap semua sumber aktif</button>
+          <SubmitButton pendingText="Mengambil berita…" confirm="Scrap semua sumber aktif sekarang? Hasilnya masuk sebagai draft." className="btn">Scrap semua sumber aktif</SubmitButton>
         </form>
       </div>
       {ok && <p className="notice notice-ok">{ok}</p>}
@@ -55,16 +56,16 @@ export default async function ScrapePage({ searchParams }: Props) {
                   <td className="row-actions">
                     <form action={runScrape}>
                       <input name="source_id" type="hidden" value={source.id} />
-                      <button className="link-ok" disabled={!source.active} type="submit">Scrap</button>
+                      <SubmitButton pendingText="Mengambil…" confirm="Scrap sumber ini sekarang?" className="link-ok" disabled={!source.active}>Scrap</SubmitButton>
                     </form>
                     <form action={toggleSource}>
                       <input name="id" type="hidden" value={source.id} />
                       <input name="active" type="hidden" value={String(source.active)} />
-                      <button type="submit">{source.active ? "Nonaktifkan" : "Aktifkan"}</button>
+                      <SubmitButton pendingText="Memproses…" confirm="Ubah status aktif sumber ini?">{source.active ? "Nonaktifkan" : "Aktifkan"}</SubmitButton>
                     </form>
                     <form action={deleteSource}>
                       <input name="id" type="hidden" value={source.id} />
-                      <button className="link-danger" type="submit">Hapus</button>
+                      <SubmitButton pendingText="Menghapus…" confirm="Hapus sumber ini? Berita hasil scrap sebelumnya tetap ada." className="link-danger">Hapus</SubmitButton>
                     </form>
                   </td>
                 </tr>
@@ -97,7 +98,7 @@ export default async function ScrapePage({ searchParams }: Props) {
           <input name="feed_url" placeholder="https://contoh.com/rss.xml" required type="url" />
         </label>
         <div className="form-actions">
-          <button className="btn" type="submit">Tambah sumber</button>
+          <SubmitButton pendingText="Menambah…" confirm="Tambah sumber RSS ini?" className="btn">Tambah sumber</SubmitButton>
         </div>
       </form>
     </section>

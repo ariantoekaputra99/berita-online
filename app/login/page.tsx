@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SubmitButton } from "@/components/SubmitButton";
 import { redirect } from "next/navigation";
 import { login } from "@/app/actions/auth";
 import { getCurrentProfile } from "@/lib/auth";
@@ -29,7 +30,7 @@ export default async function LoginPage({ searchParams }: Props) {
           <span>Kata sandi</span>
           <input autoComplete="current-password" name="password" required type="password" />
         </label>
-        <button className="btn btn-block" type="submit">Masuk</button>
+        <SubmitButton pendingText="Masuk…" className="btn btn-block">Masuk</SubmitButton>
         <p className="auth-alt">Belum punya akun? <a href="/daftar">Daftar</a></p>
       </form>
     </main>
