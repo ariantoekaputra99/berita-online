@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { deleteArticle } from "@/app/actions/articles";
 import { SubmitButton } from "@/components/SubmitButton";
 import { StatusBadge } from "@/components/StaffShell";
@@ -37,7 +38,7 @@ export default async function DashboardPage({ searchParams }: Props) {
     <section>
       <div className="panel-head">
         <h1>Berita saya</h1>
-        <a className="btn" href="/dashboard/baru">+ Tulis berita</a>
+        <Link className="btn" href="/dashboard/baru">+ Tulis berita</Link>
       </div>
       {ok && <p className="notice notice-ok">{ok}</p>}
 
@@ -56,7 +57,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                   <td data-label="Status"><StatusBadge status={article.status} /></td>
                   <td data-label="Diubah">{timeAgo(article.updated_at)}</td>
                   <td className="row-actions">
-                    {article.status !== "published" && <a href={`/dashboard/artikel/${article.id}`}>Edit</a>}
+                    {article.status !== "published" && <Link href={`/dashboard/artikel/${article.id}`}>Edit</Link>}
                     {article.status === "published" && <span className="muted">Terkunci</span>}
                     {(article.status === "draft" || article.status === "rejected") && (
                       <form action={deleteArticle}>

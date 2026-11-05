@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { SubmitButton } from "@/components/SubmitButton";
 import { redirect } from "next/navigation";
@@ -15,10 +16,10 @@ export default async function LoginPage({ searchParams }: Props) {
   return (
     <main className="auth-wrap">
       <form action={login} className="auth-card">
-        <a className="brand" href="/" aria-label="Kembali ke beranda">
+        <Link className="brand" href="/" aria-label="Kembali ke beranda">
           <span className="brand-mark" aria-hidden="true">N</span>
           <span className="brand-name">noncof<span>media</span></span>
-        </a>
+        </Link>
         <h1>Masuk ruang redaksi</h1>
         {error && <p className="notice notice-error" role="alert">{error}</p>}
         {info && <p className="notice">{info}</p>}
@@ -31,7 +32,7 @@ export default async function LoginPage({ searchParams }: Props) {
           <input autoComplete="current-password" name="password" required type="password" />
         </label>
         <SubmitButton pendingText="Masuk…" className="btn btn-block">Masuk</SubmitButton>
-        <p className="auth-alt">Belum punya akun? <a href="/daftar">Daftar</a></p>
+        <p className="auth-alt">Belum punya akun? <Link href="/daftar">Daftar</Link></p>
       </form>
     </main>
   );

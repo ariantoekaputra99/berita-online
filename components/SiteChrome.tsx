@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatDate } from "@/lib/articles";
 
 export const navItems: [label: string, slug: string][] = [
@@ -21,28 +22,28 @@ export function SiteHeader() {
           <p className="topline-note">
             Membaca Indonesia, memahami dunia <span aria-hidden="true">✳</span>
           </p>
-          <a href="/login">Masuk <span aria-hidden="true">↗</span></a>
+          <Link href="/login">Masuk <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
 
       <header className="site-header">
         <div className="page-shell header-main">
-          <a aria-label="Noncof Media, halaman utama" className="brand" href="/">
+          <Link aria-label="Noncof Media, halaman utama" className="brand" href="/">
             <span className="brand-mark" aria-hidden="true">N</span>
             <span className="brand-name">noncof<span>media</span></span>
-          </a>
+          </Link>
           <p className="brand-promise">Berita hari ini,<br />perspektif baru.</p>
-          <a className="header-cta" href="/#berita-terbaru">
+          <Link className="header-cta" href="/#berita-terbaru">
             Jelajahi berita <span aria-hidden="true">↗</span>
-          </a>
+          </Link>
         </div>
         <nav aria-label="Navigasi utama" className="category-nav">
           <div className="page-shell nav-inner">
-            <a className="nav-home" href="/" aria-label="Beranda">⌂</a>
+            <Link className="nav-home" href="/" aria-label="Beranda">⌂</Link>
             {navItems.map(([label, slug]) => (
-              <a href={`/kategori/${slug}`} key={slug}>{label}</a>
+              <Link href={`/kategori/${slug}`} key={slug}>{label}</Link>
             ))}
-            <a href="/#berita-terbaru">Terbaru <span className="live-dot" aria-hidden="true" /></a>
+            <Link href="/#berita-terbaru">Terbaru <span className="live-dot" aria-hidden="true" /></Link>
           </div>
         </nav>
       </header>
@@ -54,15 +55,15 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="page-shell footer-main">
-        <a aria-label="Noncof Media, halaman utama" className="brand footer-brand" href="/">
+        <Link aria-label="Noncof Media, halaman utama" className="brand footer-brand" href="/">
           <span className="brand-mark" aria-hidden="true">N</span>
           <span className="brand-name">noncof<span>media</span></span>
-        </a>
+        </Link>
         <p>Melihat lebih dekat.<br />Memahami lebih dalam.</p>
         <div className="footer-links">
-          <a href="/">Beranda</a>
-          <a href="/kategori/opini">Opini</a>
-          <a href="/login">Ruang redaksi</a>
+          <Link href="/">Beranda</Link>
+          <Link href="/kategori/opini">Opini</Link>
+          <Link href="/login">Ruang redaksi</Link>
           <a href="mailto:redaksi@noncofmedia.my.id">Kontak redaksi</a>
         </div>
       </div>

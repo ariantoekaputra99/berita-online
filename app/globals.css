@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root {
   --ink: #172521;
@@ -8,7 +7,7 @@
   --paper: #f7f8f3;
   --line: #e4e9e1;
   --serif: Georgia, "Times New Roman", serif;
-  --sans: "DM Sans", Arial, sans-serif;
+  --sans: var(--font-dm-sans), "DM Sans", Arial, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -70,11 +69,11 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   color: var(--acid);
   background: var(--green);
   border-radius: 50%;
-  font: 800 24px/1 "Manrope", sans-serif;
+  font: 800 24px/1 var(--font-manrope), "Manrope", sans-serif;
   letter-spacing: -3px;
   padding-right: 3px;
 }
-.brand-name { font: 800 22px/1 "Manrope", sans-serif; letter-spacing: -1.3px; }
+.brand-name { font: 800 22px/1 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -1.3px; }
 .brand-name span { color: var(--green); font-weight: 500; }
 .brand-promise { margin: 0 auto 0 42px; color: var(--muted); font: italic 14px/1.45 var(--serif); }
 .header-cta { padding: 12px 17px; border: 1px solid #cad4ca; border-radius: 3px; font-size: 12px; font-weight: 700; }
@@ -93,7 +92,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .eyebrow { margin: 0 0 17px; color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: 1.65px; }
 .hero-copy h1, .explore-intro h2, .newsletter-section h2 {
   margin: 0;
-  font: 500 clamp(38px, 4vw, 55px)/1.08 "Manrope", sans-serif;
+  font: 500 clamp(38px, 4vw, 55px)/1.08 var(--font-manrope), "Manrope", sans-serif;
   letter-spacing: -2.7px;
 }
 .hero-copy h1 em, .explore-intro h2 em, .newsletter-section h2 em { color: var(--green); font-family: var(--serif); font-weight: 400; }
@@ -111,7 +110,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .image-shade { position: absolute; inset: 30% 0 0; background: linear-gradient(180deg, transparent, rgba(10, 28, 22, .77)); }
 .image-caption { position: absolute; right: 32px; bottom: 30px; left: 32px; display: flex; flex-direction: column; color: white; }
 .caption-kicker { margin-bottom: 11px; color: var(--acid); font-size: 9px; font-weight: 700; letter-spacing: 1.4px; }
-.image-caption strong { max-width: 440px; font: 500 26px/1.22 "Manrope", sans-serif; letter-spacing: -.8px; }
+.image-caption strong { max-width: 440px; font: 500 26px/1.22 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -.8px; }
 .caption-arrow { position: absolute; right: 0; bottom: 0; display: grid; width: 35px; height: 35px; place-items: center; color: var(--ink); background: var(--acid); border-radius: 50%; }
 
 .ticker { display: flex; align-items: center; gap: 23px; min-height: 61px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -123,7 +122,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .latest-section { padding: 66px 0 78px; }
 .section-heading { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
 .section-heading .eyebrow { margin-bottom: 9px; }
-.section-heading h2 { margin: 0; font: 600 27px/1.2 "Manrope", sans-serif; letter-spacing: -1px; }
+.section-heading h2 { margin: 0; font: 600 27px/1.2 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -1px; }
 .text-link { color: var(--green); font-size: 11px; font-weight: 700; }
 .latest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 23px; }
 .latest-card { position: relative; padding-bottom: 22px; border-bottom: 1px solid #dfe5dc; }
@@ -132,7 +131,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .card-image img, .category-image img { object-fit: cover; transition: transform .5s ease; }
 .card-meta { display: flex; align-items: center; justify-content: space-between; margin: 16px 0 9px; color: var(--muted); font-size: 9px; }
 .card-meta span { color: var(--green); font-weight: 800; letter-spacing: 1px; }
-.latest-card h3 { max-width: 330px; margin: 0; padding-right: 25px; font: 600 17px/1.42 "Manrope", sans-serif; letter-spacing: -.4px; }
+.latest-card h3 { max-width: 330px; margin: 0; padding-right: 25px; font: 600 17px/1.42 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -.4px; }
 .latest-card h3 a:hover, .category-card h3 a:hover { color: var(--green); }
 .story-arrow { position: absolute; right: 0; bottom: 20px; color: var(--green); }
 
@@ -141,7 +140,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .explore-intro h2 { font-size: 39px; }
 .explore-intro > p:not(.eyebrow) { margin: 17px 0 22px; color: #657269; font-size: 12px; line-height: 1.7; }
 .explore-list { border-top: 1px solid #d1dbd0; }
-.explore-item { display: grid; grid-template-columns: 40px 1fr 24px; align-items: center; min-height: 53px; border-bottom: 1px solid #d1dbd0; font: 600 13px "Manrope", sans-serif; }
+.explore-item { display: grid; grid-template-columns: 40px 1fr 24px; align-items: center; min-height: 53px; border-bottom: 1px solid #d1dbd0; font: 600 13px var(--font-manrope), "Manrope", sans-serif; }
 .explore-item:hover .explore-arrow { transform: translate(3px, -3px); }
 .explore-number { color: #8c998f; font: 10px var(--sans); }
 .explore-arrow { color: var(--green); transition: transform .2s ease; }
@@ -151,7 +150,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .category-image { height: 165px; }
 .category-chip { position: absolute; bottom: 10px; left: 10px; padding: 6px 8px; color: var(--green); background: var(--acid); font-size: 8px; font-weight: 800; letter-spacing: .8px; }
 .category-card .card-meta { margin: 15px 0 8px; }
-.category-card h3 { margin: 0; font: 600 15px/1.4 "Manrope", sans-serif; letter-spacing: -.35px; }
+.category-card h3 { margin: 0; font: 600 15px/1.4 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -.35px; }
 .category-description { margin: 10px 0 0; color: #748077; font-size: 11px; line-height: 1.7; }
 
 .opinion-section { position: relative; display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 8%; min-height: 300px; padding: 42px 8%; overflow: hidden; color: white; background: #1d4739; }
@@ -163,7 +162,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .opinion-sun { position: absolute; top: 85px; left: 91px; width: 45px; height: 45px; background: var(--acid); border-radius: 50%; box-shadow: 0 0 60px rgba(211, 239, 117, .4); }
 .opinion-copy { max-width: 510px; }
 .opinion-copy .eyebrow { color: var(--acid); }
-.opinion-copy h2 { margin: 0; font: 500 31px/1.28 "Manrope", sans-serif; letter-spacing: -.9px; }
+.opinion-copy h2 { margin: 0; font: 500 31px/1.28 var(--font-manrope), "Manrope", sans-serif; letter-spacing: -.9px; }
 .opinion-copy h2 em { color: var(--acid); font-family: var(--serif); font-weight: 400; }
 .opinion-description { max-width: 390px; margin: 13px 0 19px; color: #c1d0c4; font-size: 12px; line-height: 1.7; }
 .button-light { color: var(--ink); background: var(--acid); }
@@ -264,7 +263,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 
 /* ---------- Public: listing & article pages ---------- */
-.image-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: var(--acid); background: var(--green); font: 800 56px/1 "Manrope", sans-serif; }
+.image-placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: var(--acid); background: var(--green); font: 800 56px/1 var(--font-manrope), "Manrope", sans-serif; }
 .listing-page { padding: 56px 0 80px; }
 .listing-title { margin: 0 0 36px; font: 400 clamp(38px, 6vw, 64px)/1.05 var(--serif); letter-spacing: -1.5px; }
 .list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 28px; }

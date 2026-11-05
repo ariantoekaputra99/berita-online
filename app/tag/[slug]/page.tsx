@@ -7,6 +7,11 @@ import { createPublicClient } from "@/lib/supabase/public";
 
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const { data } = await createPublicClient().from("tags").select("slug").limit(30);
+  return (data ?? []).map((row) => ({ slug: row.slug as string }));
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 async function getTag(slug: string) {
