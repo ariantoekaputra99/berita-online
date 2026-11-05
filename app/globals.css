@@ -277,6 +277,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .article-header h1 { margin: 0 0 18px; font: 400 clamp(32px, 5vw, 52px)/1.1 var(--serif); letter-spacing: -1px; }
 .article-lede { margin: 0 0 16px; color: #3f4d46; font-size: 19px; line-height: 1.55; }
 .article-byline { margin: 0 0 28px; color: var(--muted); font-size: 13px; }
+.photo-credit { position: absolute; right: 0; bottom: 0; margin: 0; padding: 4px 10px; font-size: 12px; color: #fff; background: rgba(0,0,0,.55); }
 .article-cover { position: relative; aspect-ratio: 16 / 9; margin-bottom: 32px; overflow: hidden; background: #dbe1da; }
 .article-body p { margin: 0 0 20px; font: 400 19px/1.75 var(--serif); }
 .source-box { padding: 16px 18px; background: #fff; border: 1px solid var(--line); font: 400 16px/1.6 var(--sans) !important; }

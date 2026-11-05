@@ -31,8 +31,8 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
       )}
       {article?.ai_generated && (
         <p className="notice notice-error">
-          Brief ini ditulis otomatis oleh AI dari judul dan ringkasan sumber. Periksa faktanya terhadap berita sumber, dan
-          unggah gambar sendiri jika perlu, sebelum menerbitkan.
+          Tulisan ini disusun otomatis oleh AI dari judul, ringkasan, dan halaman sumber. Periksa faktanya terhadap berita
+          sumber dan pastikan susunan kalimatnya sudah berbeda dari aslinya sebelum menerbitkan.
         </p>
       )}
       {article?.is_scraped && (
@@ -54,8 +54,8 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
       )}
       {article?.is_scraped && article.cover_image_url && !article.cover_image_url.includes("/storage/v1/object/public/article-images/") && (
         <p className="notice notice-error">
-          Gambar utama ini milik {article.source_name} dan hanya dipinjam lewat tautan. Untuk tulisan ulang, unggah gambar
-          sendiri (atau centang “Hapus gambar ini”) sebelum menerbitkan.
+          Gambar utama ini milik {article.source_name}, dipinjam lewat tautan dan dikreditkan di halaman berita. Unggah gambar
+          sendiri bila ingin menggantinya.
         </p>
       )}
 
