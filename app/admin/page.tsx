@@ -36,6 +36,7 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
       <div className="panel-head">
         <h1>Kelola berita</h1>
         <div className="panel-actions">
+          <a className="btn btn-ghost" href="/admin/pengguna">Kelola pengguna</a>
           <a className="btn btn-ghost" href="/admin/scrap">Scrap berita</a>
           <a className="btn" href="/dashboard/baru">+ Tulis berita</a>
         </div>
