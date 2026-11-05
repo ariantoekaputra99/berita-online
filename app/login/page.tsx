@@ -1,0 +1,37 @@
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { login } from "@/app/actions/auth";
+import { getCurrentProfile } from "@/lib/auth";
+
+export const metadata: Metadata = { title: "Masuk", robots: { index: false } };
+
+type Props = { searchParams: Promise<{ error?: string; info?: string }> };
+
+export default async function LoginPage({ searchParams }: Props) {
+  if (await getCurrentProfile()) redirect("/dashboard");
+  const { error, info } = await searchParams;
+
+  return (
+    <main className="auth-wrap">
+      <form action={login} className="auth-card">
+        <a className="brand" href="/" aria-label="Kembali ke beranda">
+          <span className="brand-mark" aria-hidden="true">N</span>
+          <span className="brand-name">noncof<span>media</span></span>
+        </a>
+        <h1>Masuk ruang redaksi</h1>
+        {error && <p className="notice notice-error" role="alert">{error}</p>}
+        {info && <p className="notice">{info}</p>}
+        <label className="field">
+          <span>Email</span>
+          <input autoComplete="email" name="email" required type="email" />
+        </label>
+        <label className="field">
+          <span>Kata sandi</span>
+          <input autoComplete="current-password" name="password" required type="password" />
+        </label>
+        <button className="btn btn-block" type="submit">Masuk</button>
+        <p className="auth-alt">Belum punya akun? <a href="/daftar">Daftar</a></p>
+      </form>
+    </main>
+  );
+}
