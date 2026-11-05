@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArticleImage } from "@/components/ArticleImage";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { formatDate, getArticleBySlug } from "@/lib/articles";
+import { renderBody } from "@/lib/markdown";
 
 export const revalidate = 60;
 
@@ -33,7 +34,8 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
-  const paragraphs = article.body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const hasBody = article.body.trim().length > 0;
+  const summaryOnly = article.is_scraped && !hasBody;
 
   return (
     <>
@@ -47,7 +49,7 @@ export default async function ArticlePage({ params }: Props) {
             <h1>{article.title}</h1>
             <p className="article-lede">{article.excerpt}</p>
             <p className="article-byline">
-              {article.is_scraped ? `Sumber: ${article.source_name}` : `Oleh ${article.author_name}`} · {formatDate(article.published_at)}
+              {summaryOnly ? `Sumber: ${article.source_name}` : `Oleh ${article.author_name}`} · {formatDate(article.published_at)}
             </p>
           </header>
 
@@ -57,7 +59,7 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
-          {article.is_scraped ? (
+          {summaryOnly ? (
             <div className="article-body">
               <p className="source-box">
                 Ringkasan ini bersumber dari <strong>{article.source_name}</strong>. Baca berita lengkap di situs aslinya.
@@ -70,9 +72,13 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           ) : (
             <div className="article-body">
-              {paragraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {renderBody(article.body)}
+              {article.is_scraped && article.source_url && (
+                <p className="source-box">
+                  Diolah redaksi dari laporan{" "}
+                  <a href={article.source_url} rel="noopener noreferrer" target="_blank">{article.source_name}</a>.
+                </p>
+              )}
             </div>
           )}
 

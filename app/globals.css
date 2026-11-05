@@ -369,3 +369,19 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   .table td { border: 0; padding: 6px 14px; }
   .table td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
 }
+
+/* ---------- Rich body editor & rewrite panel ---------- */
+.editor { display: grid; gap: 0; border: 1px solid #cad4ca; border-radius: 3px; background: #fff; }
+.editor-toolbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border-bottom: 1px solid var(--line); background: #f3f6f1; }
+.editor-toolbar button { min-width: 36px; padding: 7px 10px; border: 1px solid #cad4ca; border-radius: 3px; background: #fff; color: var(--ink); font: 700 13px/1 var(--sans); cursor: pointer; }
+.editor-toolbar button:hover { background: var(--green); border-color: var(--green); color: #fff; }
+.editor textarea { border: 0 !important; border-radius: 0 !important; }
+.source-panel { padding: 16px 18px; background: #f3f6f1; border: 1px solid var(--line); border-left: 4px solid var(--green); }
+.source-panel .eyebrow { margin-bottom: 8px; }
+.source-panel-excerpt { margin: 0 0 10px; font: 400 15px/1.55 var(--serif); }
+.source-panel ul { margin: 12px 0 0; padding-left: 18px; color: #3f4d46; font-size: 13px; line-height: 1.6; }
+.article-body h2 { margin: 36px 0 14px; font: 400 28px/1.2 var(--serif); letter-spacing: -.5px; }
+.article-body h3 { margin: 28px 0 10px; font: 700 20px/1.3 var(--sans); }
+.article-body ul { margin: 0 0 20px; padding-left: 24px; font: 400 19px/1.75 var(--serif); }
+.article-body a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+.article-body .btn { color: #fff; text-decoration: none; }

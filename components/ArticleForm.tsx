@@ -1,4 +1,5 @@
 import { saveArticle } from "@/app/actions/articles";
+import { BodyEditor } from "@/components/BodyEditor";
 import type { Category } from "@/lib/articles";
 
 type Props = {
@@ -28,10 +29,26 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
         <p className="notice notice-error">Berita ini ditolak admin. Perbaiki lalu kirim ulang.</p>
       )}
       {article?.is_scraped && (
-        <p className="notice">
-          Berita ini hasil scrap dari <strong>{article.source_name}</strong>. Hanya judul, ringkasan, dan gambar utama yang
-          disalin; pembaca diarahkan ke sumber asli.{" "}
-          {article.source_url && <a className="text-link" href={article.source_url} rel="noopener noreferrer" target="_blank">Buka sumber ↗</a>}
+        <aside className="source-panel">
+          <p className="eyebrow">BAHAN DARI {article.source_name?.toUpperCase()}</p>
+          <p className="source-panel-excerpt">{article.excerpt || "(tanpa ringkasan)"}</p>
+          {article.source_url && (
+            <a className="text-link" href={article.source_url} rel="noopener noreferrer" target="_blank">
+              Buka berita sumber untuk cek fakta ↗
+            </a>
+          )}
+          <ul>
+            <li>Tulis dengan kalimat dan susunan sendiri; jangan menyalin kalimat dari sumber.</li>
+            <li>Cek fakta di sumber dan tambahkan konteks atau sudut pandang redaksi.</li>
+            <li>Sumber otomatis dikreditkan di halaman berita setelah terbit.</li>
+            <li>Kosongkan isi berita jika hanya ingin menerbitkan ringkasan dengan tautan ke sumber.</li>
+          </ul>
+        </aside>
+      )}
+      {article?.is_scraped && article.cover_image_url && !article.cover_image_url.includes("/storage/v1/object/public/article-images/") && (
+        <p className="notice notice-error">
+          Gambar utama ini milik {article.source_name} dan hanya dipinjam lewat tautan. Untuk tulisan ulang, unggah gambar
+          sendiri (atau centang “Hapus gambar ini”) sebelum menerbitkan.
         </p>
       )}
 
@@ -48,10 +65,10 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
         <textarea defaultValue={article?.excerpt} maxLength={400} name="excerpt" rows={3} placeholder="Satu atau dua kalimat yang merangkum berita." />
       </label>
 
-      <label className="field">
+      <div className="field">
         <span>Isi berita <small>(pisahkan paragraf dengan baris kosong)</small></span>
-        <textarea defaultValue={article?.body} name="body" rows={14} placeholder="Tulis isi berita di sini…" />
-      </label>
+        <BodyEditor defaultValue={article?.body} />
+      </div>
 
       <div className="field-row">
         <label className="field">
