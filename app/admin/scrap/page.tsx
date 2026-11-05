@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { addSource, deleteSource, runScrape, toggleSource } from "@/app/actions/scrape";
 import { SubmitButton } from "@/components/SubmitButton";
 import { timeAgo } from "@/lib/articles";
@@ -33,7 +34,7 @@ export default async function ScrapePage({ searchParams }: Props) {
       <p className="notice">
         Scrap mengambil <strong>judul, ringkasan, gambar utama, dan tautan asli</strong> dari feed RSS sumber, lalu menyimpannya
         sebagai <strong>draft</strong>. Isi artikel lengkap tidak disalin; halaman berita menampilkan atribusi dan tombol menuju
-        sumber. Tinjau di <a href="/admin?status=draft">Kelola berita</a> sebelum menerbitkan. Scrap otomatis semua sumber aktif berjalan setiap hari pukul 05.00 WIB.
+        sumber. Tinjau di <Link href="/admin?status=draft">Kelola berita</Link> sebelum menerbitkan. Scrap otomatis semua sumber aktif berjalan setiap hari pukul 05.00 WIB.
       </p>
 
       <div className="table-wrap">

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArticleImage } from "@/components/ArticleImage";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { getCategories, getLatestArticles, timeAgo, type ArticleCardData } from "@/lib/articles";
@@ -217,21 +218,21 @@ export default async function Home() {
             <p className="eyebrow">JELAJAHI PERSPEKTIF</p>
             <h2 id="explore-title">Isu yang dekat,<br /><em>cerita yang berarti.</em></h2>
             <p>Pilih topikmu. Kami akan membawamu lebih dekat pada cerita di baliknya.</p>
-            <a className="text-link" href="/kategori/opini">Temukan semua rubrik <span aria-hidden="true">↗</span></a>
+            <Link className="text-link" href="/kategori/opini">Temukan semua rubrik <span aria-hidden="true">↗</span></Link>
           </div>
           <div className="explore-list">
             {categoryStories.map((story, index) => (
-              <a className="explore-item" href={`/kategori/${story.id}`} key={story.id}>
+              <Link className="explore-item" href={`/kategori/${story.id}`} key={story.id}>
                 <span className="explore-number">0{index + 1}</span>
                 <span>{story.label}</span>
                 <span className="explore-arrow" aria-hidden="true">↗</span>
-              </a>
+              </Link>
             ))}
-            <a className="explore-item" href="/kategori/opini">
+            <Link className="explore-item" href="/kategori/opini">
               <span className="explore-number">05</span>
               <span>Opini</span>
               <span className="explore-arrow" aria-hidden="true">↗</span>
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -264,9 +265,9 @@ export default async function Home() {
             <p className="eyebrow">RUANG OPINI</p>
             <h2 id="opinion-title">Masa depan tidak datang sendiri. <em>Kita yang merangkainya.</em></h2>
             <p className="opinion-description">Gagasan, sudut pandang, dan percakapan yang membuka kemungkinan baru untuk Indonesia.</p>
-            <a className="button-link button-light" href="/kategori/opini">
+            <Link className="button-link button-light" href="/kategori/opini">
               Baca opini terbaru <span aria-hidden="true">↗</span>
-            </a>
+            </Link>
           </div>
           <div className="opinion-index">01 <span>/ 04</span></div>
         </section>

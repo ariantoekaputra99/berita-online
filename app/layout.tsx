@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+
+// Self-hosted by Next at build time: no render-blocking request to Google Fonts.
+const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-dm-sans" });
+const manrope = Manrope({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], display: "swap", variable: "--font-manrope" });
 
 const siteUrl = "https://noncofmedia.my.id";
 
@@ -38,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html className={`${dmSans.variable} ${manrope.variable}`} lang="id">
       <body>{children}</body>
     </html>
   );

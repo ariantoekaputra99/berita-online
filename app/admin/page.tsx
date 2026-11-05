@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { deleteArticle, setArticleStatus } from "@/app/actions/articles";
 import { SubmitButton } from "@/components/SubmitButton";
 import { generateBriefs } from "@/app/actions/brief";
@@ -40,9 +41,9 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
       <div className="panel-head">
         <h1>Kelola berita</h1>
         <div className="panel-actions">
-          <a className="btn btn-ghost" href="/admin/pengguna">Kelola pengguna</a>
-          <a className="btn btn-ghost" href="/admin/scrap">Scrap berita</a>
-          <a className="btn" href="/dashboard/baru">+ Tulis berita</a>
+          <Link className="btn btn-ghost" href="/admin/pengguna">Kelola pengguna</Link>
+          <Link className="btn btn-ghost" href="/admin/scrap">Scrap berita</Link>
+          <Link className="btn" href="/dashboard/baru">+ Tulis berita</Link>
         </div>
       </div>
       {ok && <p className="notice notice-ok">{ok}</p>}
@@ -57,10 +58,10 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
 
       <nav aria-label="Filter status" className="filters">
         {FILTERS.map(([value, label], index) => (
-          <a aria-current={status === value ? "page" : undefined} href={`/admin?status=${value}`} key={value}>
+          <Link aria-current={status === value ? "page" : undefined} href={`/admin?status=${value}`} key={value}>
             {label}
             {value !== "all" && <span className="count">{counts[index]}</span>}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -85,9 +86,9 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                   <td data-label="Diubah">{timeAgo(article.updated_at)}</td>
                   <td className="row-actions">
                     {article.is_scraped && !article.has_body ? (
-                      <a className="link-ok" href={`/dashboard/artikel/${article.id}`}>Tulis ulang</a>
+                      <Link className="link-ok" href={`/dashboard/artikel/${article.id}`}>Tulis ulang</Link>
                     ) : (
-                      <a href={`/dashboard/artikel/${article.id}`}>Edit</a>
+                      <Link href={`/dashboard/artikel/${article.id}`}>Edit</Link>
                     )}
                     {article.is_scraped && (!article.has_body || article.ai_generated) && article.status === "draft" && (
                       <form action={generateBriefs}>

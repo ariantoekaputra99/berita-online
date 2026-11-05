@@ -1,11 +1,19 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleImage } from "@/components/ArticleImage";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { formatDate, getArticleBySlug } from "@/lib/articles";
 import { renderBody } from "@/lib/markdown";
+import { createPublicClient } from "@/lib/supabase/public";
 
 export const revalidate = 60;
+
+// Pre-build the newest articles; any other slug is rendered on first visit and then cached (ISR).
+export async function generateStaticParams() {
+  const { data } = await createPublicClient().from("articles").select("slug").eq("status", "published").order("published_at", { ascending: false }).limit(30);
+  return (data ?? []).map((row) => ({ slug: row.slug as string }));
+}
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -44,7 +52,7 @@ export default async function ArticlePage({ params }: Props) {
         <article>
           <header className="article-header">
             {article.category && (
-              <a className="eyebrow" href={`/kategori/${article.category.slug}`}>{article.category.name.toUpperCase()}</a>
+              <Link className="eyebrow" href={`/kategori/${article.category.slug}`}>{article.category.name.toUpperCase()}</Link>
             )}
             <h1>{article.title}</h1>
             <p className="article-lede">{article.excerpt}</p>
@@ -88,7 +96,7 @@ export default async function ArticlePage({ params }: Props) {
           {article.tags.length > 0 && (
             <ul className="tag-list" aria-label="Tag">
               {article.tags.map((tag) => (
-                <li key={tag.slug}><a href={`/tag/${tag.slug}`}>#{tag.name}</a></li>
+                <li key={tag.slug}><Link href={`/tag/${tag.slug}`}>#{tag.name}</Link></li>
               ))}
             </ul>
           )}

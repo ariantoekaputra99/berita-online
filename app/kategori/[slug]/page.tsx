@@ -6,6 +6,10 @@ import { getCategories, getLatestArticles } from "@/lib/articles";
 
 export const revalidate = 60;
 
+export async function generateStaticParams() {
+  return (await getCategories()).map((category) => ({ slug: category.slug }));
+}
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
