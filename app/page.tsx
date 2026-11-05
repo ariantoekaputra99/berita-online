@@ -1,37 +1,37 @@
-import Image from "next/image";
+import { ArticleImage } from "@/components/ArticleImage";
+import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { getCategories, getLatestArticles, timeAgo, type ArticleCardData } from "@/lib/articles";
+
+export const revalidate = 60;
 
 const image = (id: string, width = 1400) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=85`;
 
-const navItems = [
-  ["Nasional", "#nasional"],
-  ["Ekonomi", "#ekonomi"],
-  ["Teknologi", "#teknologi"],
-  ["Gaya Hidup", "#gaya-hidup"],
-  ["Opini", "#opini"],
-];
-
-const latestStories = [
+// Placeholder stories shown until the newsroom publishes real articles.
+const fallbackLatest = [
   {
     category: "EKONOMI",
     title: "UMKM lokal mulai melirik pasar digital Asia Tenggara",
-    time: "12 menit lalu",
-    image: "photo-1556742049-0cfed4f6a45d",
+    time: "Contoh tampilan",
+    image: image("photo-1556742049-0cfed4f6a45d", 900),
     alt: "Pelaku usaha menyiapkan pesanan untuk pelanggan",
+    href: "/kategori/ekonomi",
   },
   {
     category: "TEKNOLOGI",
     title: "Kota-kota Indonesia bersiap menyambut transportasi masa depan",
-    time: "38 menit lalu",
-    image: "photo-1519501025264-65ba15a82390",
+    time: "Contoh tampilan",
+    image: image("photo-1519501025264-65ba15a82390", 900),
     alt: "Pemandangan kota metropolitan saat malam",
+    href: "/kategori/teknologi",
   },
   {
     category: "GAYA HIDUP",
     title: "Ruang hijau kota menjadi tempat pulang yang baru",
-    time: "1 jam lalu",
-    image: "photo-1441974231531-c6227db76b6e",
+    time: "Contoh tampilan",
+    image: image("photo-1441974231531-c6227db76b6e", 900),
     alt: "Jalur pejalan kaki yang teduh di tengah hutan",
+    href: "/kategori/gaya-hidup",
   },
 ];
 
@@ -43,7 +43,7 @@ const categoryStories = [
     title: "Dari pesisir hingga pegunungan, warga bergerak merawat ruang hidup",
     description:
       "Inisiatif komunitas tumbuh di berbagai daerah, membawa harapan baru untuk lingkungan dan masa depan bersama.",
-    image: "photo-1518837695005-2083093ee35b",
+    image: image("photo-1518837695005-2083093ee35b", 800),
     alt: "Ombak dan garis pantai yang luas",
   },
   {
@@ -53,7 +53,7 @@ const categoryStories = [
     title: "Ekonomi kreatif daerah menemukan momentumnya",
     description:
       "Kolaborasi pelaku lokal dan teknologi membuka jalan bagi produk Indonesia untuk menjangkau lebih banyak orang.",
-    image: "photo-1521737711867-e3b97375f902",
+    image: image("photo-1521737711867-e3b97375f902", 800),
     alt: "Tim kreatif bekerja bersama di ruang kolaborasi",
   },
   {
@@ -63,7 +63,7 @@ const categoryStories = [
     title: "Inovasi sederhana yang membuat hidup sehari-hari lebih mudah",
     description:
       "Dari layanan publik sampai ruang kerja, teknologi buatan anak bangsa kian dekat dengan kebutuhan masyarakat.",
-    image: "photo-1518770660439-4636190af475",
+    image: image("photo-1518770660439-4636190af475", 800),
     alt: "Komponen elektronik dan papan sirkuit",
   },
   {
@@ -73,7 +73,7 @@ const categoryStories = [
     title: "Melambat sejenak, menemukan kembali ritme hidup di kota",
     description:
       "Makin banyak warga memilih kebiasaan yang lebih mindful untuk menjaga keseimbangan di tengah kesibukan.",
-    image: "photo-1445116572660-236099ec97a0",
+    image: image("photo-1445116572660-236099ec97a0", 800),
     alt: "Suasana kafe yang hangat dan tenang",
   },
 ];
@@ -104,44 +104,49 @@ function SectionHeading({
   );
 }
 
-export default function Home() {
+function toLatestCard(article: ArticleCardData) {
+  return {
+    category: (article.category?.name ?? "BERITA").toUpperCase(),
+    title: article.title,
+    time: timeAgo(article.published_at),
+    image: article.cover_image_url,
+    alt: article.title,
+    href: `/berita/${article.slug}`,
+  };
+}
+
+export default async function Home() {
+  const categories = await getCategories();
+  const [latestArticles, ...perCategory] = await Promise.all([
+    getLatestArticles(12),
+    ...categoryStories.map((story) => {
+      const category = categories.find((item) => item.slug === story.id);
+      return category ? getLatestArticles(1, category.id) : Promise.resolve([] as ArticleCardData[]);
+    }),
+  ]);
+
+  const featured = latestArticles[0] ?? null;
+  // The latest-news grid is designed for three cards, so show placeholders until there are three real articles.
+  const latestStories = latestArticles.length >= 3 ? latestArticles.slice(0, 3).map(toLatestCard) : fallbackLatest;
+  const cards = categoryStories.map((story, index) => {
+    const article = perCategory[index]?.[0];
+    return article
+      ? {
+          id: story.id,
+          label: story.label,
+          eyebrow: story.eyebrow,
+          title: article.title,
+          description: article.excerpt,
+          image: article.cover_image_url,
+          alt: article.title,
+          href: `/berita/${article.slug}`,
+        }
+      : { ...story, href: `/kategori/${story.id}` };
+  });
+
   return (
     <>
-      <a className="skip-link" href="#konten">
-        Langsung ke konten
-      </a>
-
-      <div className="topline">
-        <div className="page-shell topline-inner">
-          <p>Kamis, 5 November 2026</p>
-          <p className="topline-note">
-            Membaca Indonesia, memahami dunia <span aria-hidden="true">✳</span>
-          </p>
-          <a href="#newsletter">Berlangganan <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-
-      <header className="site-header">
-        <div className="page-shell header-main">
-          <a aria-label="Noncof Media, halaman utama" className="brand" href="#">
-            <span className="brand-mark" aria-hidden="true">N</span>
-            <span className="brand-name">noncof<span>media</span></span>
-          </a>
-          <p className="brand-promise">Berita hari ini,<br />perspektif baru.</p>
-          <a className="header-cta" href="#berita-terbaru">
-            Jelajahi berita <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-        <nav aria-label="Navigasi utama" className="category-nav">
-          <div className="page-shell nav-inner">
-            <a className="nav-home" href="#konten" aria-label="Beranda">⌂</a>
-            {navItems.map(([label, href]) => (
-              <a href={href} key={label}>{label}</a>
-            ))}
-            <a href="#berita-terbaru">Terbaru <span className="live-dot" aria-hidden="true" /></a>
-          </div>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <main id="konten" className="page-shell">
         <section aria-labelledby="headline-title" className="hero-section">
@@ -162,19 +167,24 @@ export default function Home() {
               <span><strong>Redaksi Noncof</strong><small>Untuk pembaca yang ingin tahu lebih</small></span>
             </div>
           </div>
-          <a className="hero-visual" href="#nasional" aria-label="Baca berita pilihan tentang Indonesia yang bergerak">
-            <Image
-              alt="Lanskap kota dan aktivitas warga Indonesia di pagi hari"
+          <a
+            className="hero-visual"
+            href={featured ? `/berita/${featured.slug}` : "/kategori/nasional"}
+            aria-label={featured ? `Baca: ${featured.title}` : "Baca berita pilihan tentang Indonesia yang bergerak"}
+          >
+            <ArticleImage
+              alt={featured?.title ?? "Lanskap kota dan aktivitas warga Indonesia di pagi hari"}
               className="hero-image"
-              fill
               priority
               sizes="(max-width: 760px) 100vw, 58vw"
-              src={image("photo-1519608487348-f3c686c7bdb5", 1800)}
+              src={featured?.cover_image_url ?? image("photo-1480714378408-67cf0d13bc1b", 1800)}
             />
             <span className="image-shade" />
             <span className="image-caption">
-              <span className="caption-kicker">CERITA UTAMA · 6 MENIT BACA</span>
-              <strong>Indonesia bergerak, satu cerita baik dalam satu waktu</strong>
+              <span className="caption-kicker">
+                {featured ? `${(featured.category?.name ?? "BERITA").toUpperCase()} · TERBARU` : "CERITA UTAMA · 6 MENIT BACA"}
+              </span>
+              <strong>{featured?.title ?? "Indonesia bergerak, satu cerita baik dalam satu waktu"}</strong>
               <span className="caption-arrow" aria-hidden="true">↗</span>
             </span>
           </a>
@@ -182,21 +192,21 @@ export default function Home() {
 
         <section aria-label="Berita terkini" className="ticker">
           <span className="ticker-label"><span className="live-dot" /> TERKINI</span>
-          <p>Ide-ide baru lahir dari sekitar kita. Ikuti kabar terbaru pilihan redaksi Noncof Media.</p>
-          <a href="#berita-terbaru" aria-label="Lihat berita terkini">→</a>
+          <p>{featured?.title ?? "Ide-ide baru lahir dari sekitar kita. Ikuti kabar terbaru pilihan redaksi Noncof Media."}</p>
+          <a href={featured ? `/berita/${featured.slug}` : "#berita-terbaru"} aria-label="Lihat berita terkini">→</a>
         </section>
 
         <section aria-labelledby="latest-title" className="latest-section" id="berita-terbaru">
-          <SectionHeading eyebrow="JANGAN KETINGGALAN" title="Kabar terbaru" id="latest-title" link="#nasional" />
+          <SectionHeading eyebrow="JANGAN KETINGGALAN" title="Kabar terbaru" id="latest-title" link="/kategori/nasional" />
           <div className="latest-grid">
             {latestStories.map((story, index) => (
-              <article className={`latest-card latest-card-${index + 1}`} key={story.title}>
-                <a className="card-image" href={index === 0 ? "#ekonomi" : index === 1 ? "#teknologi" : "#gaya-hidup"}>
-                  <Image alt={story.alt} fill sizes="(max-width: 760px) 100vw, 33vw" src={image(story.image, 900)} />
+              <article className={`latest-card latest-card-${index + 1}`} key={story.href + story.title}>
+                <a className="card-image" href={story.href}>
+                  <ArticleImage alt={story.alt} sizes="(max-width: 760px) 100vw, 33vw" src={story.image} />
                 </a>
                 <div className="card-meta"><span>{story.category}</span><time>{story.time}</time></div>
-                <h3><a href={index === 0 ? "#ekonomi" : index === 1 ? "#teknologi" : "#gaya-hidup"}>{story.title}</a></h3>
-                <a className="story-arrow" href={index === 0 ? "#ekonomi" : index === 1 ? "#teknologi" : "#gaya-hidup"} aria-label={`Baca: ${story.title}`}>↗</a>
+                <h3><a href={story.href}>{story.title}</a></h3>
+                <a className="story-arrow" href={story.href} aria-label={`Baca: ${story.title}`}>↗</a>
               </article>
             ))}
           </div>
@@ -207,17 +217,17 @@ export default function Home() {
             <p className="eyebrow">JELAJAHI PERSPEKTIF</p>
             <h2 id="explore-title">Isu yang dekat,<br /><em>cerita yang berarti.</em></h2>
             <p>Pilih topikmu. Kami akan membawamu lebih dekat pada cerita di baliknya.</p>
-            <a className="text-link" href="#opini">Temukan semua rubrik <span aria-hidden="true">↗</span></a>
+            <a className="text-link" href="/kategori/opini">Temukan semua rubrik <span aria-hidden="true">↗</span></a>
           </div>
           <div className="explore-list">
             {categoryStories.map((story, index) => (
-              <a className="explore-item" href={`#${story.id}`} key={story.id}>
+              <a className="explore-item" href={`/kategori/${story.id}`} key={story.id}>
                 <span className="explore-number">0{index + 1}</span>
                 <span>{story.label}</span>
                 <span className="explore-arrow" aria-hidden="true">↗</span>
               </a>
             ))}
-            <a className="explore-item" href="#opini">
+            <a className="explore-item" href="/kategori/opini">
               <span className="explore-number">05</span>
               <span>Opini</span>
               <span className="explore-arrow" aria-hidden="true">↗</span>
@@ -226,16 +236,16 @@ export default function Home() {
         </section>
 
         <section aria-labelledby="stories-title" className="category-section">
-          <SectionHeading eyebrow="DARI BERBAGAI SUDUT" title="Cerita untuk hari ini" id="stories-title" link="#newsletter" />
+          <SectionHeading eyebrow="DARI BERBAGAI SUDUT" title="Cerita untuk hari ini" id="stories-title" link="/kategori/nasional" />
           <div className="category-grid">
-            {categoryStories.map((story, index) => (
+            {cards.map((story, index) => (
               <article className="category-card" id={story.id} key={story.id}>
-                <a className="category-image" href="#berita-terbaru" aria-label={`Lihat berita ${story.label}`}>
-                  <Image alt={story.alt} fill sizes="(max-width: 760px) 100vw, 25vw" src={image(story.image, 800)} />
+                <a className="category-image" href={story.href} aria-label={`Baca: ${story.title}`}>
+                  <ArticleImage alt={story.alt} sizes="(max-width: 760px) 100vw, 25vw" src={story.image} />
                   <span className="category-chip">{story.eyebrow}</span>
                 </a>
                 <p className="card-meta"><span>0{index + 1} · {story.label.toUpperCase()}</span></p>
-                <h3><a href="#berita-terbaru">{story.title}</a></h3>
+                <h3><a href={story.href}>{story.title}</a></h3>
                 <p className="category-description">{story.description}</p>
               </article>
             ))}
@@ -254,7 +264,7 @@ export default function Home() {
             <p className="eyebrow">RUANG OPINI</p>
             <h2 id="opinion-title">Masa depan tidak datang sendiri. <em>Kita yang merangkainya.</em></h2>
             <p className="opinion-description">Gagasan, sudut pandang, dan percakapan yang membuka kemungkinan baru untuk Indonesia.</p>
-            <a className="button-link button-light" href="#berita-terbaru">
+            <a className="button-link button-light" href="/kategori/opini">
               Baca opini terbaru <span aria-hidden="true">↗</span>
             </a>
           </div>
@@ -276,24 +286,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="page-shell footer-main">
-          <a aria-label="Noncof Media, halaman utama" className="brand footer-brand" href="#konten">
-            <span className="brand-mark" aria-hidden="true">N</span>
-            <span className="brand-name">noncof<span>media</span></span>
-          </a>
-          <p>Melihat lebih dekat.<br />Memahami lebih dalam.</p>
-          <div className="footer-links">
-            <a href="#konten">Beranda</a>
-            <a href="#opini">Tentang kami</a>
-            <a href="mailto:redaksi@noncofmedia.my.id">Kontak redaksi</a>
-          </div>
-        </div>
-        <div className="page-shell footer-bottom">
-          <span>© 2026 Noncof Media. Hak cipta dilindungi.</span>
-          <span>Jurnalisme independen, perspektif Indonesia.</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
