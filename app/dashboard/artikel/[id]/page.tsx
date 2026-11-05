@@ -17,7 +17,7 @@ export default async function EditArticlePage({ params, searchParams }: Props) {
   const [{ data: article }, { data: categories }] = await Promise.all([
     supabase
       .from("articles")
-      .select("id, title, excerpt, body, category_id, cover_image_url, status, is_scraped, source_name, source_url, article_tags(tag:tags(name))")
+      .select("id, title, excerpt, body, category_id, cover_image_url, status, is_scraped, ai_generated, source_name, source_url, article_tags(tag:tags(name))")
       .eq("id", id)
       .maybeSingle(),
     supabase.from("categories").select("id, name, slug").order("sort_order"),

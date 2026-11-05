@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
+import { aiConfigured, briefDrafts, type BriefOutcome } from "@/lib/ai";
 import { scrapeSources } from "@/lib/scrape";
 import { createPublicClient } from "@/lib/supabase/public";
 
@@ -28,11 +29,16 @@ export async function GET(request: NextRequest) {
   if (!email || !password) return Response.json({ error: "Scraper bot credentials are not configured" }, { status: 500 });
 
   const supabase = createPublicClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return Response.json({ error: "Scraper bot sign-in failed" }, { status: 500 });
+  const { data: session, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !session.user) return Response.json({ error: "Scraper bot sign-in failed" }, { status: 500 });
 
   const result = await scrapeSources(supabase);
+  // Optional: turn new drafts into short AI briefs (capped per run to bound cost). They stay drafts.
+  let briefs: BriefOutcome | null = null;
+  if (aiConfigured()) {
+    briefs = await briefDrafts(supabase, { id: session.user.id, name: "Redaksi Noncof" }, { limit: 10 });
+  }
   revalidatePath("/admin");
   revalidatePath("/admin/scrap");
-  return Response.json(result);
+  return Response.json({ ...result, briefs });
 }
