@@ -1,4 +1,5 @@
 import { saveArticle } from "@/app/actions/articles";
+import { SubmitButton } from "@/components/SubmitButton";
 import { BodyEditor } from "@/components/BodyEditor";
 import type { Category } from "@/lib/articles";
 
@@ -108,11 +109,11 @@ export function ArticleForm({ categories, isAdmin, error, article }: Props) {
       </div>
 
       <div className="form-actions">
-        <button className="btn btn-ghost" name="intent" type="submit" value="draft">Simpan draft</button>
+        <SubmitButton pendingText="Menyimpan…" className="btn btn-ghost" name="intent" value="draft">Simpan draft</SubmitButton>
         {isAdmin ? (
-          <button className="btn" name="intent" type="submit" value="publish">Terbitkan</button>
+          <SubmitButton pendingText="Menerbitkan…" confirm="Terbitkan berita ini ke publik sekarang?" className="btn" name="intent" value="publish">Terbitkan</SubmitButton>
         ) : (
-          <button className="btn" name="intent" type="submit" value="submit">Kirim untuk ditinjau</button>
+          <SubmitButton pendingText="Mengirim…" confirm="Kirim tulisan ini ke admin untuk ditinjau?" className="btn" name="intent" value="submit">Kirim untuk ditinjau</SubmitButton>
         )}
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { setUserRole } from "@/app/actions/users";
+import { SubmitButton } from "@/components/SubmitButton";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -35,7 +36,7 @@ export default async function UsersPage() {
                         <option value="writer">writer</option>
                         <option value="admin">admin</option>
                       </select>
-                      <button className="btn btn-ghost btn-small" type="submit">Simpan</button>
+                      <SubmitButton pendingText="Menyimpan…" confirm="Ubah peran pengguna ini?" className="btn btn-ghost btn-small">Simpan</SubmitButton>
                     </form>
                   )}
                 </td>

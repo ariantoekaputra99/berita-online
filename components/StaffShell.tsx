@@ -1,4 +1,5 @@
 import { logout } from "@/app/actions/auth";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { CurrentProfile } from "@/lib/auth";
 
 export function StaffShell({
@@ -30,7 +31,7 @@ export function StaffShell({
           </nav>
           <form action={logout} className="staff-user">
             <span>{profile.full_name || profile.email} · {profile.role}</span>
-            <button className="btn btn-ghost btn-small" type="submit">Keluar</button>
+            <SubmitButton pendingText="Keluar…" className="btn btn-ghost btn-small">Keluar</SubmitButton>
           </form>
         </div>
       </header>

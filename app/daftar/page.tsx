@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SubmitButton } from "@/components/SubmitButton";
 import { redirect } from "next/navigation";
 import { signup } from "@/app/actions/auth";
 import { getCurrentProfile } from "@/lib/auth";
@@ -33,7 +34,7 @@ export default async function SignupPage({ searchParams }: Props) {
           <span>Kata sandi <small>(minimal 8 karakter)</small></span>
           <input autoComplete="new-password" minLength={8} name="password" required type="password" />
         </label>
-        <button className="btn btn-block" type="submit">Daftar</button>
+        <SubmitButton pendingText="Mendaftar…" className="btn btn-block">Daftar</SubmitButton>
         <p className="auth-alt">Sudah punya akun? <a href="/login">Masuk</a></p>
       </form>
     </main>

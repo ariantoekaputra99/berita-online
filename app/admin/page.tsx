@@ -1,4 +1,5 @@
 import { deleteArticle, setArticleStatus } from "@/app/actions/articles";
+import { SubmitButton } from "@/components/SubmitButton";
 import { generateBriefs } from "@/app/actions/brief";
 import { StatusBadge } from "@/components/StaffShell";
 import { timeAgo } from "@/lib/articles";
@@ -50,7 +51,7 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
       {status === "draft" && (
         <form action={generateBriefs} className="bulk-bar">
           <p>Buat brief otomatis (AI) untuk 10 draf scrap terbaru yang belum punya isi. Hasilnya tetap draf; kamu cek lalu klik Terbitkan.</p>
-          <button className="btn btn-ghost" type="submit">Buat brief otomatis</button>
+          <SubmitButton pendingText="Menulis brief…" confirm="Buat brief otomatis untuk 10 draf scrap terbaru? Ini memakai kuota API AI." className="btn btn-ghost">Buat brief otomatis</SubmitButton>
         </form>
       )}
 
@@ -91,33 +92,33 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                     {article.is_scraped && (!article.has_body || article.ai_generated) && article.status === "draft" && (
                       <form action={generateBriefs}>
                         <input name="id" type="hidden" value={article.id} />
-                        <button type="submit">{article.ai_generated ? "Ulangi brief" : "Brief otomatis"}</button>
+                        <SubmitButton pendingText="Menulis…" confirm="Buat brief otomatis untuk berita ini? Isi lama (jika ada) akan diganti.">{article.ai_generated ? "Ulangi brief" : "Brief otomatis"}</SubmitButton>
                       </form>
                     )}
                     {article.status !== "published" && (
                       <form action={setArticleStatus}>
                         <input name="id" type="hidden" value={article.id} />
                         <input name="status" type="hidden" value="published" />
-                        <button className="link-ok" type="submit">Terbitkan</button>
+                        <SubmitButton pendingText="Menerbitkan…" confirm="Terbitkan berita ini ke publik?" className="link-ok">Terbitkan</SubmitButton>
                       </form>
                     )}
                     {article.status === "published" && (
                       <form action={setArticleStatus}>
                         <input name="id" type="hidden" value={article.id} />
                         <input name="status" type="hidden" value="draft" />
-                        <button type="submit">Tarik ke draft</button>
+                        <SubmitButton pendingText="Memproses…" confirm="Tarik berita ini kembali ke draft? Berita tidak lagi tampil di situs.">Tarik ke draft</SubmitButton>
                       </form>
                     )}
                     {(article.status === "pending" || article.status === "draft") && (
                       <form action={setArticleStatus}>
                         <input name="id" type="hidden" value={article.id} />
                         <input name="status" type="hidden" value="rejected" />
-                        <button type="submit">Tolak</button>
+                        <SubmitButton pendingText="Memproses…" confirm="Tolak berita ini dan kembalikan ke penulis?">Tolak</SubmitButton>
                       </form>
                     )}
                     <form action={deleteArticle}>
                       <input name="id" type="hidden" value={article.id} />
-                      <button className="link-danger" type="submit">Hapus</button>
+                      <SubmitButton pendingText="Menghapus…" confirm="Hapus berita ini secara permanen? Tindakan ini tidak bisa dibatalkan." className="link-danger">Hapus</SubmitButton>
                     </form>
                   </td>
                 </tr>

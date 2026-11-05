@@ -390,3 +390,21 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .bulk-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding: 12px 16px; background: #fff; border: 1px solid var(--line); flex-wrap: wrap; }
 .bulk-bar p { margin: 0; font-size: 14px; color: #3f4d46; flex: 1 1 320px; }
 .ai-tag { background: #efe6fb; color: #5a2d9c; }
+
+/* Loading state for SubmitButton */
+.spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 8px;
+  vertical-align: -0.15em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+button.is-loading { cursor: progress; }
+button:disabled { cursor: not-allowed; }
+button.is-loading:disabled { opacity: .85; cursor: progress; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
