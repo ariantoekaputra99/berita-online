@@ -30,7 +30,7 @@ export default async function ScrapePage({ searchParams }: Props) {
       <p className="notice">
         Scrap mengambil <strong>judul, ringkasan, gambar utama, dan tautan asli</strong> dari feed RSS sumber, lalu menyimpannya
         sebagai <strong>draft</strong>. Isi artikel lengkap tidak disalin; halaman berita menampilkan atribusi dan tombol menuju
-        sumber. Tinjau di <a href="/admin?status=draft">Kelola berita</a> sebelum menerbitkan.
+        sumber. Tinjau di <a href="/admin?status=draft">Kelola berita</a> sebelum menerbitkan. Scrap otomatis semua sumber aktif berjalan setiap hari pukul 05.00 WIB.
       </p>
 
       <div className="table-wrap">
