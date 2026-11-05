@@ -88,10 +88,10 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                     ) : (
                       <a href={`/dashboard/artikel/${article.id}`}>Edit</a>
                     )}
-                    {article.is_scraped && !article.has_body && article.status === "draft" && (
+                    {article.is_scraped && (!article.has_body || article.ai_generated) && article.status === "draft" && (
                       <form action={generateBriefs}>
                         <input name="id" type="hidden" value={article.id} />
-                        <button type="submit">Brief otomatis</button>
+                        <button type="submit">{article.ai_generated ? "Ulangi brief" : "Brief otomatis"}</button>
                       </form>
                     )}
                     {article.status !== "published" && (

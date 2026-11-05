@@ -56,6 +56,9 @@ export default async function ArticlePage({ params }: Props) {
           {article.cover_image_url && (
             <div className="article-cover">
               <ArticleImage alt={article.title} priority sizes="(max-width: 900px) 100vw, 900px" src={article.cover_image_url} />
+              {article.is_scraped && article.source_name && !article.cover_image_url.includes("/storage/v1/object/public/article-images/") && (
+                <p className="photo-credit">Foto: {article.source_name}</p>
+              )}
             </div>
           )}
 
@@ -75,7 +78,7 @@ export default async function ArticlePage({ params }: Props) {
               {renderBody(article.body)}
               {article.is_scraped && article.source_url && (
                 <p className="source-box">
-                  {article.ai_generated ? "Brief ini disusun dengan bantuan AI dari ringkasan laporan" : "Diolah redaksi dari laporan"}{" "}
+                  {article.ai_generated ? "Berita ini disusun ulang dengan bantuan AI dari laporan" : "Diolah redaksi dari laporan"}{" "}
                   <a href={article.source_url} rel="noopener noreferrer" target="_blank">{article.source_name}</a>
                   {article.ai_generated ? " dan ditinjau redaksi sebelum terbit." : "."}
                 </p>
