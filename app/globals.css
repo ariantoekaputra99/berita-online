@@ -408,3 +408,18 @@ button:disabled { cursor: not-allowed; }
 button.is-loading:disabled { opacity: .85; cursor: progress; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+
+/* Modals (SubmitButton confirm + progress) */
+.modal-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px; background: rgba(15, 25, 20, .55); animation: fade-in .15s ease-out; }
+.modal { width: min(420px, 100%); padding: 24px; background: #fff; border-radius: 6px; box-shadow: 0 20px 50px rgba(0,0,0,.3); animation: pop-in .18s ease-out; }
+.modal h2 { margin: 0 0 8px; font-size: 20px; }
+.modal p { margin: 0 0 20px; line-height: 1.5; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.btn-danger { background: #b3261e; }
+.btn-danger:hover { background: #8f1d17; }
+.modal-loading { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.modal-loading p { margin: 8px 0 0; font-weight: 600; }
+.modal-loading small { color: #5b6a62; }
+.spinner-lg { width: 32px; height: 32px; margin: 0; border-width: 3px; color: var(--green); }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(.98); } }
