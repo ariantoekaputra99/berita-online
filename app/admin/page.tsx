@@ -19,7 +19,7 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
 
   let query = supabase
     .from("articles")
-    .select("id, title, status, author_name, is_scraped, source_name, updated_at, category:categories(name)")
+    .select("id, title, status, author_name, is_scraped, source_name, updated_at, has_body:body, category:categories(name)")
     .order("updated_at", { ascending: false })
     .limit(100);
   if (status !== "all") query = query.eq("status", status);
@@ -71,7 +71,11 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
                   <td data-label="Status"><StatusBadge status={article.status} /></td>
                   <td data-label="Diubah">{timeAgo(article.updated_at)}</td>
                   <td className="row-actions">
-                    <a href={`/dashboard/artikel/${article.id}`}>Edit</a>
+                    {article.is_scraped && !article.has_body ? (
+                      <a className="link-ok" href={`/dashboard/artikel/${article.id}`}>Tulis ulang</a>
+                    ) : (
+                      <a href={`/dashboard/artikel/${article.id}`}>Edit</a>
+                    )}
                     {article.status !== "published" && (
                       <form action={setArticleStatus}>
                         <input name="id" type="hidden" value={article.id} />

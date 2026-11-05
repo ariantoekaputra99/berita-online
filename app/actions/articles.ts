@@ -53,7 +53,14 @@ export async function saveArticle(formData: FormData) {
   const fail = (message: string) => redirect(`${back}?error=${encodeURIComponent(message)}`);
 
   if (title.length < 5) fail("Judul minimal 5 karakter.");
-  if (intent !== "draft" && body.length < 30) fail("Isi berita minimal 30 karakter sebelum dikirim.");
+  // Scraped items may be published as summary + source link, so they are exempt from the body minimum.
+  let existing: { slug: string; published_at: string | null; is_scraped: boolean } | null = null;
+  if (id) {
+    const { data } = await supabase.from("articles").select("slug, published_at, is_scraped").eq("id", id).single();
+    if (!data) fail("Berita tidak ditemukan atau kamu tidak punya akses.");
+    existing = data;
+  }
+  if (intent !== "draft" && body.length < 30 && !existing?.is_scraped) fail("Isi berita minimal 30 karakter sebelum dikirim.");
   if (intent === "publish" && profile.role !== "admin") fail("Hanya admin yang dapat menerbitkan berita.");
 
   let status: ArticleStatus = "draft";
@@ -88,13 +95,17 @@ export async function saveArticle(formData: FormData) {
   let articleId = id;
   let slug = "";
 
-  if (id) {
-    const { data: existing } = await supabase.from("articles").select("slug, published_at").eq("id", id).single();
-    if (!existing) fail("Berita tidak ditemukan atau kamu tidak punya akses.");
-    slug = existing!.slug;
+  if (id && existing) {
+    slug = existing.slug;
+    // A scraped item that gets an original body becomes the editor's own write-up (source stays credited).
+    const rewritten = existing.is_scraped && body.length > 0 ? { author_id: profile.id, author_name: profile.full_name || "Redaksi Noncof" } : {};
     const { error } = await supabase
       .from("articles")
-      .update({ ...fields, published_at: status === "published" ? (existing!.published_at ?? new Date().toISOString()) : existing!.published_at })
+      .update({
+        ...fields,
+        ...rewritten,
+        published_at: status === "published" ? (existing.published_at ?? new Date().toISOString()) : existing.published_at,
+      })
       .eq("id", id);
     if (error) fail("Gagal menyimpan perubahan.");
   } else {
