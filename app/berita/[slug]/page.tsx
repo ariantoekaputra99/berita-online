@@ -78,9 +78,8 @@ export default async function ArticlePage({ params }: Props) {
               {renderBody(article.body)}
               {article.is_scraped && article.source_url && (
                 <p className="source-box">
-                  {article.ai_generated ? "Berita ini disusun ulang dengan bantuan AI dari laporan" : "Diolah redaksi dari laporan"}{" "}
+                  Sumber:{" "}
                   <a href={article.source_url} rel="noopener noreferrer" target="_blank">{article.source_name}</a>
-                  {article.ai_generated ? " dan ditinjau redaksi sebelum terbit." : "."}
                 </p>
               )}
             </div>
