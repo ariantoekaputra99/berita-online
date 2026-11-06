@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleImage } from "@/components/ArticleImage";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { formatDate, getArticleBySlug } from "@/lib/articles";
+import { ArticleCard } from "@/components/ArticleCard";
+import { formatDate, getArticleBySlug, getCategories, getLatestArticles } from "@/lib/articles";
 import { renderBody } from "@/lib/markdown";
 import { createPublicClient } from "@/lib/supabase/public";
 
@@ -42,6 +43,9 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
+  const category = article.category ? (await getCategories()).find((item) => item.slug === article.category?.slug) : undefined;
+  const related = (await getLatestArticles(4, category?.id)).filter((item) => item.id !== article.id).slice(0, 3);
+
   const hasBody = article.body.trim().length > 0;
   const summaryOnly = article.is_scraped && !hasBody;
 
@@ -52,7 +56,7 @@ export default async function ArticlePage({ params }: Props) {
         <article>
           <header className="article-header">
             {article.category && (
-              <Link className="eyebrow" href={`/kategori/${article.category.slug}`}>{article.category.name.toUpperCase()}</Link>
+              <Link className="kicker" href={`/kategori/${article.category.slug}`}>{article.category.name}</Link>
             )}
             <h1>{article.title}</h1>
             <p className="article-lede">{article.excerpt}</p>
@@ -62,12 +66,14 @@ export default async function ArticlePage({ params }: Props) {
           </header>
 
           {article.cover_image_url && (
-            <div className="article-cover">
-              <ArticleImage alt={article.title} priority sizes="(max-width: 900px) 100vw, 900px" src={article.cover_image_url} />
+            <figure className="article-figure">
+              <div className="article-cover">
+                <ArticleImage alt={article.title} priority sizes="(max-width: 800px) 100vw, 760px" src={article.cover_image_url} />
+              </div>
               {article.is_scraped && article.source_name && !article.cover_image_url.includes("/storage/v1/object/public/article-images/") && (
-                <p className="photo-credit">Foto: {article.source_name}</p>
+                <figcaption>Foto: {article.source_name}</figcaption>
               )}
-            </div>
+            </figure>
           )}
 
           {summaryOnly ? (
@@ -102,6 +108,18 @@ export default async function ArticlePage({ params }: Props) {
           )}
         </article>
       </main>
+      {related.length > 0 && (
+        <section aria-labelledby="berita-lain" className="page-shell block related">
+          <div className="block-head">
+            <h2 id="berita-lain">Berita lainnya</h2>
+          </div>
+          <div className="story-grid">
+            {related.map((item) => (
+              <ArticleCard article={item} key={item.id} />
+            ))}
+          </div>
+        </section>
+      )}
       <SiteFooter />
     </>
   );
