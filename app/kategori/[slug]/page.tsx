@@ -34,7 +34,7 @@ export default async function CategoryPage({ params }: Props) {
     <>
       <SiteHeader />
       <main id="konten" className="page-shell listing-page">
-        <p className="eyebrow">RUBRIK</p>
+        <p className="kicker">Rubrik</p>
         <h1 className="listing-title">{category.name}</h1>
         <ArticleList articles={articles} empty={`Belum ada berita di rubrik ${category.name}.`} />
       </main>
