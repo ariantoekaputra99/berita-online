@@ -1,19 +1,19 @@
-import Script from "next/script";
+import { AdblockNotice } from "@/components/AdblockNotice";
 import { AdUnit } from "@/components/AdUnit";
 import { getAdSettings, slotReady, type AdSlotKey } from "@/lib/ads";
 
-/** Loads the AdSense library once per public page, only when an AdSense slot is actually in use. */
+/**
+ * Loads the AdSense library whenever a publisher id is saved: Google needs the snippet in the page source to verify the
+ * site, and it is what powers Auto ads. Slots and the anti-adblock notice still follow the master switch.
+ */
 export async function AdScript() {
-  const { enabled, publisherId, slots } = await getAdSettings();
-  if (!enabled || !publisherId || !slots.some((slot) => slot.kind === "adsense" && slotReady(slot, publisherId))) return null;
+  const { enabled, publisherId, antiAdblock } = await getAdSettings();
+  if (!publisherId) return null;
   return (
-    <Script
-      async
-      crossOrigin="anonymous"
-      id="adsense"
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
-      strategy="afterInteractive"
-    />
+    <>
+      <script async crossOrigin="anonymous" src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`} />
+      {enabled && antiAdblock && <AdblockNotice publisherId={publisherId} />}
+    </>
   );
 }
 
