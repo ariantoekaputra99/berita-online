@@ -26,6 +26,7 @@ export function StaffShell({
               <>
                 <Link href="/admin">Kelola berita</Link>
                 <Link href="/admin/scrap">Scrap</Link>
+                <Link href="/admin/iklan">Iklan</Link>
                 <Link href="/admin/pengguna">Pengguna</Link>
               </>
             )}

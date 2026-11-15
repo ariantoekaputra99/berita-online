@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArticleCard } from "@/components/ArticleCard";
+import { AdSlot } from "@/components/AdSlot";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { getCategories, getLatestArticles, timeAgo, type ArticleCardData } from "@/lib/articles";
 
@@ -60,8 +61,10 @@ export default async function Home() {
           </section>
         )}
 
-        {sections.map(({ category, articles }) => (
-          <section aria-labelledby={`rubrik-${category.slug}`} className="block" key={category.id}>
+        {sections.map(({ category, articles }, index) => (
+          <div key={category.id}>
+          {index === 1 && <AdSlot slot="home_mid" />}
+          <section aria-labelledby={`rubrik-${category.slug}`} className="block">
             <div className="block-head">
               <h2 id={`rubrik-${category.slug}`}>{category.name}</h2>
               <Link href={`/kategori/${category.slug}`}>Lihat semua</Link>
@@ -72,6 +75,7 @@ export default async function Home() {
               ))}
             </div>
           </section>
+          </div>
         ))}
       </main>
 

@@ -40,10 +40,24 @@ function renderLines(lines: string[], keyPrefix: string): ReactNode[] {
   ]);
 }
 
-export function renderBody(text: string): ReactNode[] {
+/** `afterParagraph(n, total)` may return a node (e.g. an ad) to place after the n-th plain paragraph (1-based). */
+export function renderBody(text: string, afterParagraph?: (n: number, total: number) => ReactNode): ReactNode[] {
   const blocks = text.replace(/\r\n/g, "\n").split(/\n{2,}/).map((b) => b.trim()).filter(Boolean);
+  const isParagraph = (block: string) => {
+    const lines = block.split("\n");
+    return !(lines.length === 1 && (block.startsWith("## ") || block.startsWith("### "))) && !lines.every((line) => line.startsWith("- "));
+  };
+  const total = blocks.filter(isParagraph).length;
+  let seen = 0;
 
-  return blocks.map((block, i) => {
+  return blocks.flatMap((block, i) => {
+    const node = renderBlock(block, i);
+    if (!afterParagraph || !isParagraph(block)) return [node];
+    const extra = afterParagraph(++seen, total);
+    return extra ? [node, <div key={`ad${i}`}>{extra}</div>] : [node];
+  });
+
+  function renderBlock(block: string, i: number): ReactNode {
     const key = `b${i}`;
     const lines = block.split("\n");
 
@@ -61,5 +75,5 @@ export function renderBody(text: string): ReactNode[] {
     }
 
     return <p key={key}>{renderLines(lines, key)}</p>;
-  });
+  }
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleImage } from "@/components/ArticleImage";
+import { AdSlot } from "@/components/AdSlot";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ArticleCard } from "@/components/ArticleCard";
 import { formatDate, getArticleBySlug, getCategories, getLatestArticles } from "@/lib/articles";
@@ -89,7 +90,9 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           ) : (
             <div className="article-body">
-              {renderBody(article.body)}
+              {renderBody(article.body, (n, total) =>
+                n === 2 ? <AdSlot slot="article_inline_1" /> : n === 6 && total >= 8 ? <AdSlot slot="article_inline_2" /> : null,
+              )}
               {article.is_scraped && article.source_url && (
                 <p className="source-box">
                   Sumber:{" "}
@@ -98,6 +101,8 @@ export default async function ArticlePage({ params }: Props) {
               )}
             </div>
           )}
+
+          <AdSlot slot="article_end" />
 
           {article.tags.length > 0 && (
             <ul className="tag-list" aria-label="Tag">
