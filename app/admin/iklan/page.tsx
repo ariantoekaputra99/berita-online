@@ -1,5 +1,5 @@
-import { saveAdSettings } from "@/app/actions/ads";
-import { AdSlotFields } from "@/components/AdSlotFields";
+import { saveAdConfig } from "@/app/actions/ads";
+import { AdSlotCard } from "@/components/AdSlotCard";
 import { SubmitButton } from "@/components/SubmitButton";
 import { getAdSettings } from "@/lib/ads";
 import { createClient } from "@/lib/supabase/server";
@@ -18,41 +18,27 @@ export default async function AdsPage({ searchParams }: Props) {
       {error && <p className="notice notice-error" role="alert">{error}</p>}
 
       <p className="ad-help">
-        Setiap posisi bisa memakai <strong>Google AdSense</strong>, <strong>kode iklan dari jaringan lain</strong> (Adsterra, Media.net, jaringan lokal, dll.),
-        atau <strong>banner langsung</strong> untuk sponsor sendiri. Kode dari jaringan lain berjalan di dalam kotak terisolasi (iframe), jadi tidak bisa
-        menyentuh sesi atau data situs. Posisi yang belum lengkap tidak menampilkan apa pun. Halaman admin dan penulis tidak pernah menampilkan iklan.
+        Iklan hanya ada di posisi yang tidak menghalangi bacaan. Tiap posisi bisa berupa banner sponsor (gambar + link) atau kode dari jaringan iklan mana pun
+        (Google AdSense, Adsterra, Media.net, dll.). Kode non-AdSense berjalan di kotak terisolasi. Posisi dengan versi HP kosong memakai versi desktop yang
+        diperkecil. Halaman admin dan penulis tidak pernah menampilkan iklan.
       </p>
 
-      <form action={saveAdSettings} className="ad-grid">
-        <div className="ad-row">
-          <label className="ad-row-head">
-            <strong>Aktifkan iklan di situs</strong>
-            <input defaultChecked={Boolean(config?.enabled)} name="enabled" type="checkbox" />
-          </label>
-          <label className="ad-row-head">
-            <span>
-              <strong>Pesan anti-adblock</strong>
-              <br />
-              <small>Pengunjung dengan pemblokir iklan melihat pesan sopan (bisa ditutup) yang meminta mengizinkan iklan. Isi berita tidak diblokir.</small>
-            </span>
-            <input defaultChecked={antiAdblock} name="anti_adblock" type="checkbox" />
-          </label>
-          <label>
-            ID penerbit AdSense (hanya jika memakai AdSense)
-            <input defaultValue={publisherId ?? ""} name="publisher_id" placeholder="ca-pub-1234567890123456" type="text" />
-          </label>
-          <label>
-            Baris tambahan ads.txt (opsional, satu baris per jaringan, biasanya diberikan jaringan iklanmu)
-            <textarea defaultValue={adsTxtExtra ?? ""} name="ads_txt_extra" placeholder="adsterra.com, 1234567, DIRECT, abc123def456" rows={3} />
-          </label>
-        </div>
+      <div className="ad-grid">
+        <form action={saveAdConfig} className="ad-row" id="umum">
+          <div className="ad-row-head">
+            <h2>Pengaturan umum</h2>
+            <label className="ad-switch"><input defaultChecked={Boolean(config?.enabled)} name="enabled" type="checkbox" /> Aktifkan iklan di situs</label>
+          </div>
+          <label>ID penerbit AdSense (jika memakai AdSense)<input defaultValue={publisherId ?? ""} name="publisher_id" placeholder="ca-pub-1234567890123456" type="text" /></label>
+          <label className="ad-switch"><input defaultChecked={antiAdblock} name="anti_adblock" type="checkbox" /> Pesan sopan untuk pengunjung dengan pemblokir iklan (isi berita tidak diblokir)</label>
+          <label>Baris tambahan ads.txt (opsional, satu baris per jaringan)<textarea defaultValue={adsTxtExtra ?? ""} name="ads_txt_extra" placeholder="adsterra.com, 1234567, DIRECT, abc123def456" rows={3} /></label>
+          <div><SubmitButton className="btn" pendingText="Menyimpan…">Simpan</SubmitButton></div>
+        </form>
 
         {slots.map((slot) => (
-          <AdSlotFields key={slot.slot_key} slot={slot} />
+          <AdSlotCard key={slot.slot_key} slot={slot} />
         ))}
-
-        <div><SubmitButton className="btn" pendingText="Menyimpan…">Simpan pengaturan</SubmitButton></div>
-      </form>
+      </div>
     </section>
   );
 }

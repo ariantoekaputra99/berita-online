@@ -15,10 +15,14 @@ export type AdSlotRow = {
   banner_link_url: string | null;
   width: number;
   height: number;
+  mobile_banner_image_url: string | null;
+  mobile_code: string | null;
+  mobile_width: number;
+  mobile_height: number;
 };
 export type AdSettings = { enabled: boolean; publisherId: string | null; adsTxtExtra: string | null; antiAdblock: boolean; slots: AdSlotRow[] };
 
-const SLOT_COLUMNS = "slot_key, label, position_note, enabled, kind, unit_id, code, banner_image_url, banner_link_url, width, height";
+const SLOT_COLUMNS = "slot_key, label, position_note, enabled, kind, unit_id, code, banner_image_url, banner_link_url, width, height, mobile_banner_image_url, mobile_code, mobile_width, mobile_height";
 
 /** Ad settings for the current request (deduplicated across header, slots and ads.txt). */
 export const getAdSettings = cache(async (): Promise<AdSettings> => {
@@ -42,6 +46,14 @@ export function slotReady(slot: AdSlotRow, publisherId: string | null): boolean 
   if (slot.kind === "adsense") return Boolean(publisherId && slot.unit_id);
   if (slot.kind === "code") return Boolean(slot.code?.trim());
   return Boolean(slot.banner_image_url && slot.banner_link_url);
+}
+
+/** Pulls client + slot ids out of a pasted AdSense <ins> snippet, so it can render as a native ad unit. */
+export function parseAdsense(code: string | null): { client: string; unit: string } | null {
+  if (!code) return null;
+  const client = /data-ad-client\s*=\s*["'](ca-pub-\d+)["']/.exec(code)?.[1];
+  const unit = /data-ad-slot\s*=\s*["'](\d+)["']/.exec(code)?.[1];
+  return client && unit ? { client, unit } : null;
 }
 
 export const PUBLISHER_ID = /^ca-pub-\d{10,20}$/;
