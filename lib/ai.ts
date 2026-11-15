@@ -102,7 +102,7 @@ export type BriefOutcome = { written: number; skipped: number; failed: string[] 
 export async function briefDrafts(
   supabase: SupabaseClient,
   editor: { id: string; name: string },
-  options: { ids?: string[]; limit: number },
+  options: { ids?: string[]; limit: number; budgetMs?: number },
 ): Promise<BriefOutcome> {
   let query = supabase
     .from("articles")
@@ -116,7 +116,9 @@ export async function briefDrafts(
   const { data: items } = await query;
 
   const outcome: BriefOutcome = { written: 0, skipped: 0, failed: [] };
+  const startedAt = Date.now();
   for (const item of items ?? []) {
+    if (options.budgetMs && Date.now() - startedAt > options.budgetMs) break; // leave time for the function to finish
     if (outcome.written + outcome.failed.length >= options.limit) break;
     try {
       const page = await fetchSourcePage(item.source_url);
