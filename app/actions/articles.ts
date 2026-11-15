@@ -175,3 +175,43 @@ export async function deleteArticle(formData: FormData) {
   refreshPublicPages(existing?.slug);
   revalidatePath(profile.role === "admin" ? "/admin" : "/dashboard");
 }
+
+/** Publishes every draft that was rewritten by AI and has a body. Admin only; keeps the source order by staggering published_at. */
+export async function publishAllAiDrafts() {
+  await requireRole(["admin"]);
+  const supabase = await createClient();
+  const back = (kind: "ok" | "error", message: string) =>
+    redirect(`/admin?status=draft&${kind}=${encodeURIComponent(message)}`);
+
+  const { data: drafts, error } = await supabase
+    .from("articles")
+    .select("id, slug, published_at")
+    .eq("status", "draft")
+    .eq("ai_generated", true)
+    .neq("body", "")
+    .order("created_at", { ascending: true });
+  if (error) back("error", `Gagal membaca draf: ${error.message}`);
+  if (!drafts?.length) back("error", "Tidak ada draf hasil tulis ulang AI yang siap terbit.");
+
+  // Oldest draft gets the earliest timestamp, so the homepage keeps the original order (newest on top).
+  const base = Date.now() - drafts!.length * 1000;
+  let published = 0;
+  for (let start = 0; start < drafts!.length; start += 20) {
+    const results = await Promise.all(
+      drafts!.slice(start, start + 20).map((draft, offset) =>
+        supabase
+          .from("articles")
+          .update({ status: "published", published_at: draft.published_at ?? new Date(base + (start + offset) * 1000).toISOString() })
+          .eq("id", draft.id)
+          .eq("status", "draft"),
+      ),
+    );
+    published += results.filter((result) => !result.error).length;
+  }
+
+  refreshPublicPages();
+  revalidatePath("/admin");
+  const failed = drafts!.length - published;
+  if (!published) back("error", "Tidak ada berita yang berhasil diterbitkan.");
+  back("ok", `${published} berita hasil tulis ulang AI diterbitkan${failed ? `, ${failed} gagal` : ""}.`);
+}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { deleteArticle, setArticleStatus } from "@/app/actions/articles";
+import { deleteArticle, publishAllAiDrafts, setArticleStatus } from "@/app/actions/articles";
 import { SubmitButton } from "@/components/SubmitButton";
 import { generateBriefs } from "@/app/actions/brief";
 import { StatusBadge } from "@/components/StaffShell";
@@ -34,6 +34,10 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
     const { count } = await supabase.from("articles").select("id", { count: "exact", head: true }).eq("status", value);
     return count ?? 0;
   };
+  const { count: aiReadyCount } =
+    status === "draft"
+      ? await supabase.from("articles").select("id", { count: "exact", head: true }).eq("status", "draft").eq("ai_generated", true).neq("body", "")
+      : { count: 0 };
   const counts = await Promise.all(FILTERS.filter(([v]) => v !== "all").map(([v]) => countOf(v)));
 
   return (
@@ -53,6 +57,19 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
         <form action={generateBriefs} className="bulk-bar">
           <p>Buat brief otomatis (AI) untuk 10 draf scrap terbaru yang belum punya isi. Hasilnya tetap draf; kamu cek lalu klik Terbitkan.</p>
           <SubmitButton pendingText="Menulis brief…" confirm="Buat brief otomatis untuk 10 draf scrap terbaru? Ini memakai kuota API AI." className="btn btn-ghost">Buat brief otomatis</SubmitButton>
+        </form>
+      )}
+
+      {status === "draft" && !!aiReadyCount && (
+        <form action={publishAllAiDrafts} className="bulk-bar">
+          <p><strong>{aiReadyCount} draf</strong> hasil tulis ulang AI siap terbit. Terbitkan sekaligus tanpa membuka satu per satu.</p>
+          <SubmitButton
+            className="btn"
+            confirm={`Terbitkan ${aiReadyCount} berita hasil tulis ulang AI ke publik sekarang? Pastikan kamu sudah memeriksa contohnya.`}
+            pendingText="Menerbitkan…"
+          >
+            Terbitkan semua ({aiReadyCount})
+          </SubmitButton>
         </form>
       )}
 
