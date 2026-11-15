@@ -1,13 +1,5 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/articles";
-
-export const navItems: [label: string, slug: string][] = [
-  ["Nasional", "nasional"],
-  ["Ekonomi", "ekonomi"],
-  ["Teknologi", "teknologi"],
-  ["Gaya Hidup", "gaya-hidup"],
-  ["Opini", "opini"],
-];
+import { formatDate, getMenuCategories } from "@/lib/articles";
 
 function Brand({ light }: { light?: boolean }) {
   return (
@@ -18,7 +10,8 @@ function Brand({ light }: { light?: boolean }) {
   );
 }
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const menu = await getMenuCategories();
   return (
     <>
       <a className="skip-link" href="#konten">
@@ -39,8 +32,8 @@ export function SiteHeader() {
         <nav aria-label="Navigasi utama" className="category-nav">
           <div className="page-shell nav-inner">
             <Link href="/">Beranda</Link>
-            {navItems.map(([label, slug]) => (
-              <Link href={`/kategori/${slug}`} key={slug}>{label}</Link>
+            {menu.map(({ name, slug }) => (
+              <Link href={`/kategori/${slug}`} key={slug}>{name}</Link>
             ))}
           </div>
         </nav>
@@ -49,7 +42,8 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const menu = await getMenuCategories();
   return (
     <footer className="site-footer">
       <div className="page-shell footer-main">
@@ -59,8 +53,8 @@ export function SiteFooter() {
         </div>
         <nav aria-label="Rubrik" className="footer-col">
           <h2>Rubrik</h2>
-          {navItems.map(([label, slug]) => (
-            <Link href={`/kategori/${slug}`} key={slug}>{label}</Link>
+          {menu.map(({ name, slug }) => (
+            <Link href={`/kategori/${slug}`} key={slug}>{name}</Link>
           ))}
         </nav>
         <div className="footer-col">
