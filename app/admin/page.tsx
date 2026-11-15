@@ -47,6 +47,7 @@ export default async function AdminArticlesPage({ searchParams }: Props) {
         <div className="panel-actions">
           <Link className="btn btn-ghost" href="/admin/pengguna">Kelola pengguna</Link>
           <Link className="btn btn-ghost" href="/admin/scrap">Scrap berita</Link>
+          <Link className="btn btn-ghost" href="/admin/iklan">Iklan</Link>
           <Link className="btn" href="/dashboard/baru">+ Tulis berita</Link>
         </div>
       </div>
