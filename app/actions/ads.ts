@@ -55,7 +55,7 @@ export async function saveAdSettings(formData: FormData) {
   const results = await Promise.all([
     supabase
       .from("ad_config")
-      .update({ enabled, publisher_id: publisherId || null, ads_txt_extra: adsTxtExtra || null, updated_at: new Date().toISOString() })
+      .update({ enabled, publisher_id: publisherId || null, ads_txt_extra: adsTxtExtra || null, anti_adblock: formData.get("anti_adblock") === "on", updated_at: new Date().toISOString() })
       .eq("id", true),
     ...updates,
   ]);

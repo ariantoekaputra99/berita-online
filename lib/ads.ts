@@ -16,7 +16,7 @@ export type AdSlotRow = {
   width: number;
   height: number;
 };
-export type AdSettings = { enabled: boolean; publisherId: string | null; adsTxtExtra: string | null; slots: AdSlotRow[] };
+export type AdSettings = { enabled: boolean; publisherId: string | null; adsTxtExtra: string | null; antiAdblock: boolean; slots: AdSlotRow[] };
 
 const SLOT_COLUMNS = "slot_key, label, position_note, enabled, kind, unit_id, code, banner_image_url, banner_link_url, width, height";
 
@@ -24,13 +24,14 @@ const SLOT_COLUMNS = "slot_key, label, position_note, enabled, kind, unit_id, co
 export const getAdSettings = cache(async (): Promise<AdSettings> => {
   const supabase = createPublicClient();
   const [{ data: config }, { data: slots }] = await Promise.all([
-    supabase.from("ad_config").select("enabled, publisher_id, ads_txt_extra").maybeSingle(),
+    supabase.from("ad_config").select("enabled, publisher_id, ads_txt_extra, anti_adblock").maybeSingle(),
     supabase.from("ad_slots").select(SLOT_COLUMNS).order("sort_order"),
   ]);
   return {
     enabled: Boolean(config?.enabled),
     publisherId: config?.publisher_id ?? null,
     adsTxtExtra: config?.ads_txt_extra ?? null,
+    antiAdblock: config?.anti_adblock ?? true,
     slots: (slots ?? []) as AdSlotRow[],
   };
 });

@@ -8,7 +8,7 @@ type Props = { searchParams: Promise<{ ok?: string; error?: string }> };
 
 export default async function AdsPage({ searchParams }: Props) {
   const { ok, error } = await searchParams;
-  const { slots, publisherId, adsTxtExtra } = await getAdSettings();
+  const { slots, publisherId, adsTxtExtra, antiAdblock } = await getAdSettings();
   const { data: config } = await (await createClient()).from("ad_config").select("enabled").maybeSingle();
 
   return (
@@ -28,6 +28,14 @@ export default async function AdsPage({ searchParams }: Props) {
           <label className="ad-row-head">
             <strong>Aktifkan iklan di situs</strong>
             <input defaultChecked={Boolean(config?.enabled)} name="enabled" type="checkbox" />
+          </label>
+          <label className="ad-row-head">
+            <span>
+              <strong>Pesan anti-adblock</strong>
+              <br />
+              <small>Pengunjung dengan pemblokir iklan melihat pesan sopan (bisa ditutup) yang meminta mengizinkan iklan. Isi berita tidak diblokir.</small>
+            </span>
+            <input defaultChecked={antiAdblock} name="anti_adblock" type="checkbox" />
           </label>
           <label>
             ID penerbit AdSense (hanya jika memakai AdSense)
