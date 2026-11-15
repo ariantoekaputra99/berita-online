@@ -3,17 +3,21 @@ import { revalidatePath } from "next/cache";
 import type { NextRequest } from "next/server";
 import { aiConfigured, briefDrafts, type BriefOutcome } from "@/lib/ai";
 import { scrapeSources } from "@/lib/scrape";
-import { createPublicClient } from "@/lib/supabase/public";
+import { signInBot } from "@/lib/bot";
+import { countReadyAiDrafts } from "@/lib/publish";
+import { notifyAll, publishPrompt, telegramConfigured } from "@/lib/telegram";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function authorized(request: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
   const given = Buffer.from(request.headers.get("authorization") ?? "");
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return given.length === expected.length && timingSafeEqual(given, expected);
+  // CRON_SECRET: Vercel Cron. AUTOMATION_SECRET: the hourly database scheduler (pg_cron).
+  return [process.env.CRON_SECRET, process.env.AUTOMATION_SECRET].some((secret) => {
+    if (!secret) return false;
+    const expected = Buffer.from(`Bearer ${secret}`);
+    return given.length === expected.length && timingSafeEqual(given, expected);
+  });
 }
 
 /**
@@ -24,21 +28,29 @@ function authorized(request: NextRequest): boolean {
 export async function GET(request: NextRequest) {
   if (!authorized(request)) return new Response("Unauthorized", { status: 401 });
 
-  const email = process.env.SCRAPER_BOT_EMAIL;
-  const password = process.env.SCRAPER_BOT_PASSWORD;
-  if (!email || !password) return Response.json({ error: "Scraper bot credentials are not configured" }, { status: 500 });
-
-  const supabase = createPublicClient();
-  const { data: session, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error || !session.user) return Response.json({ error: "Scraper bot sign-in failed" }, { status: 500 });
+  const bot = await signInBot();
+  if (!bot) return Response.json({ error: "Scraper bot is not configured or sign-in failed" }, { status: 500 });
+  const { supabase, userId } = bot;
 
   const result = await scrapeSources(supabase);
-  // Optional: turn new drafts into short AI briefs (capped per run to bound cost). They stay drafts.
+  // Turn new drafts into AI briefs (capped per run to bound cost and time). They stay drafts.
   let briefs: BriefOutcome | null = null;
   if (aiConfigured()) {
-    briefs = await briefDrafts(supabase, { id: session.user.id, name: "Redaksi Noncof" }, { limit: 10 });
+    briefs = await briefDrafts(supabase, { id: userId, name: "Redaksi Noncof" }, { limit: 10, budgetMs: 40000 });
   }
   revalidatePath("/admin");
   revalidatePath("/admin/scrap");
-  return Response.json({ ...result, briefs });
+
+  // Tell the editors on Telegram when something new is ready to publish.
+  let ready = 0;
+  if (telegramConfigured() && (result.added || briefs?.written)) {
+    ready = await countReadyAiDrafts(supabase);
+    if (ready) {
+      await notifyAll(
+        `${result.added} berita baru di-scrap, ${briefs?.written ?? 0} brief dibuat.\n${ready} draf hasil tulis ulang AI siap terbit.`,
+        publishPrompt(ready),
+      );
+    }
+  }
+  return Response.json({ ...result, briefs, ready });
 }
