@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdScript, AdSlot } from "@/components/AdSlot";
 import { formatDate, getMenuCategories } from "@/lib/articles";
 
 function Brand({ light }: { light?: boolean }) {
@@ -18,6 +19,7 @@ export async function SiteHeader() {
         Langsung ke konten
       </a>
 
+      <AdScript />
       <header className="site-header">
         <div className="topline">
           <div className="page-shell topline-inner">
@@ -38,6 +40,9 @@ export async function SiteHeader() {
           </div>
         </nav>
       </header>
+      <div className="page-shell">
+        <AdSlot slot="header" />
+      </div>
     </>
   );
 }
@@ -60,6 +65,7 @@ export async function SiteFooter() {
         <div className="footer-col">
           <h2>Redaksi</h2>
           <a href="mailto:redaksi@noncofmedia.my.id">Kontak redaksi</a>
+          <Link href="/kebijakan-privasi">Kebijakan privasi</Link>
           <Link href="/login">Ruang redaksi</Link>
         </div>
       </div>
