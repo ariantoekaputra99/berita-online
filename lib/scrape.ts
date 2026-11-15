@@ -41,6 +41,13 @@ export async function scrapeSources(supabase: SupabaseClient, sourceId = "all"):
           .upsert(rows, { onConflict: "source_url", ignoreDuplicates: true })
           .select("id");
         if (error) throw new Error(error.message);
+        // Keep already-stored items in the rubric of the feed they appear in.
+        await supabase
+          .from("articles")
+          .update({ category_id: source.category_id })
+          .in("source_url", items.map((item) => item.link))
+          .eq("is_scraped", true)
+          .neq("category_id", source.category_id);
         added += inserted?.length ?? 0;
       }
       await supabase.from("scrape_sources").update({ last_scraped_at: new Date().toISOString() }).eq("id", source.id);

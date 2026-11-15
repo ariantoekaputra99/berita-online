@@ -77,6 +77,17 @@ export async function getCategories(): Promise<Category[]> {
   return data ?? [];
 }
 
+/** Rubrik untuk menu: hanya yang punya minimal satu berita terbit, urut sesuai sort_order. */
+export async function getMenuCategories(): Promise<Category[]> {
+  const { data } = await createPublicClient()
+    .from("categories")
+    .select("id, name, slug, articles!inner(id)")
+    .eq("articles.status", "published")
+    .limit(1, { foreignTable: "articles" })
+    .order("sort_order");
+  return (data ?? []).map(({ id, name, slug }) => ({ id, name, slug }));
+}
+
 export async function getLatestArticles(limit = 12, categoryId?: string): Promise<ArticleCardData[]> {
   let query = createPublicClient()
     .from("articles")
